@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"feizhufanfan.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="JNA使用范例  JAVA、C++变量映射表 C++端程序示例生产DLL&#x2F;SO库">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JNA使用范例">
+<meta property="og:url" content="https://feizhufanfan.github.io/2023/02/09/JNA%E4%BD%BF%E7%94%A8%E8%8C%83%E4%BE%8B/index.html">
+<meta property="og:site_name" content="鲜奶鱼板面">
+<meta property="og:description" content="JNA使用范例  JAVA、C++变量映射表 C++端程序示例生产DLL&#x2F;SO库">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.feizhufanfan.top:18088/minio/images/blog/20230209134103.png">
+<meta property="og:image" content="https://blog.feizhufanfan.top:18088/minio/images/blog/20230209154111.png">
+<meta property="article:published_time" content="2023-02-09T03:24:29.000Z">
+<meta property="article:modified_time" content="2025-12-11T16:53:07.478Z">
+<meta property="article:author" content="Mr.du">
+<meta property="article:tag" content="JAVA">
+<meta property="article:tag" content="C++">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.feizhufanfan.top:18088/minio/images/blog/20230209134103.png">
+
+<link rel="canonical" href="https://feizhufanfan.github.io/2023/02/09/JNA%E4%BD%BF%E7%94%A8%E8%8C%83%E4%BE%8B/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>JNA使用范例 | 鲜奶鱼板面</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">鲜奶鱼板面</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-主页">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>主页</a>
+
+  </li>
+        <li class="menu-item menu-item-标签">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-技术">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>技术</a>
+
+  </li>
+        <li class="menu-item menu-item-life">
+
+    <a href="/categories/%E9%9A%8F%E7%AC%94/" rel="section"><i class="fa fa-pizza-slice fa-fw"></i>生活</a>
+
+  </li>
+        <li class="menu-item menu-item-归档">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://feizhufanfan.github.io/2023/02/09/JNA%E4%BD%BF%E7%94%A8%E8%8C%83%E4%BE%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Mr.du">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鲜奶鱼板面">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          JNA使用范例
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-02-09 11:24:29" itemprop="dateCreated datePublished" datetime="2023-02-09T11:24:29+08:00">2023-02-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-12-12 00:53:07" itemprop="dateModified" datetime="2025-12-12T00:53:07+08:00">2025-12-12</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JAVA/" itemprop="url" rel="index"><span itemprop="name">JAVA</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JAVA/JNA/" itemprop="url" rel="index"><span itemprop="name">JNA</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 style="text-align:center;">JNA使用范例</h1>
+
+<h2 id="JAVA、C-变量映射表"><a href="#JAVA、C-变量映射表" class="headerlink" title="JAVA、C++变量映射表"></a>JAVA、C++变量映射表</h2><p><img src="https://blog.feizhufanfan.top:18088/minio/images/blog/20230209134103.png" alt="JAVA/Native 变量类型转换"></p>
+<h2 id="C-端程序示例生产DLL-x2F-SO库"><a href="#C-端程序示例生产DLL-x2F-SO库" class="headerlink" title="C++端程序示例生产DLL&#x2F;SO库"></a>C++端程序示例生产DLL&#x2F;SO库</h2><p>导出函数公共头文件<code>CommonHead.h</code></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">ifndef</span> COMMONHEAD_H</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> COMMONHEAD_H</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> WIN32</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> __cplusplus</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> DLL_EXPORT_C_DECL extern <span class="string">&quot;C&quot;</span> __declspec(dllexport)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> DLL_IMPORT_C_DECL extern <span class="string">&quot;C&quot;</span> __declspec(dllimport)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> DLL_EXPORT_DECL extern __declspec(dllexport)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> DLL_IMPORT_DECL extern __declspec(dllimport)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> DLL_EXPORT_CLASS_DECL __declspec(dllexport)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> DLL_IMPORT_CLASS_DECL __declspec(dllimport)</span></span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> DLL_EXPORT_DECL __declspec(dllexport)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> DLL_IMPORT_DECL __declspec(dllimport)</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> __cplusplus</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> DLL_EXPORT_C_DECL extern <span class="string">&quot;C&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> DLL_IMPORT_C_DECL extern <span class="string">&quot;C&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> DLL_EXPORT_DECL extern</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> DLL_IMPORT_DECL extern</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> DLL_EXPORT_CLASS_DECL</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> DLL_IMPORT_CLASS_DECL</span></span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> DLL_EXPORT_DECL extern</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> DLL_IMPORT_DECL extern</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="SDK头文件SDK-h"><a href="#SDK头文件SDK-h" class="headerlink" title="SDK头文件SDK.h"></a>SDK头文件<code>SDK.h</code></h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">ifndef</span> SDK_H</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> SDK_H</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;commonHead.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> SDK_EXPORTS</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> SDK_CLASS DLL_EXPORT_CLASS_DECL</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> SDK_API DLL_EXPORT_DECL</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> SDK_C_API DLL_EXPORT_C_DECL</span></span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> SDK_CLASS DLL_IMPORT_CLASS_DECL</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> SDK_API DLL_IMPORT_DECL</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> SDK_C_API DLL_IMPORT_C_DECL</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> JNAEXPORTS    <span class="comment">//在导出DLL给java使用时不能使用内存对齐，不然java传递数据内存与C++里无法对应导致数据传递失败</span></span></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> <span class="title class_">TestStruct</span> &#123;</span><br><span class="line">    <span class="type">int</span> intvalue;</span><br><span class="line">    <span class="type">int</span>* ptrint;</span><br><span class="line">    <span class="type">char</span>* ptrchar;</span><br><span class="line">&#125;TestStruct;</span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">if</span> defined(WIN32)</span></span><br><span class="line"><span class="meta">#<span class="keyword">pragma</span> pack(pop)</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> <span class="title class_">TestStruct</span> &#123;</span><br><span class="line">    <span class="type">int</span> intvalue;</span><br><span class="line">    <span class="type">int</span>* ptrint;</span><br><span class="line">    <span class="type">char</span>* ptrchar;</span><br><span class="line">&#125;TestStruct;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">if</span> defined(WIN32)</span></span><br><span class="line"><span class="meta">#<span class="keyword">pragma</span> pack(pop)</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">//导出普通函数</span></span><br><span class="line"><span class="function">SDK_C_API <span class="type">void</span> <span class="title">StringHello</span><span class="params">(<span class="type">const</span> <span class="type">char</span>* inbuffer)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function">SDK_C_API <span class="type">int</span> <span class="title">intFormJAVA</span><span class="params">(<span class="type">int</span> inValue)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function">SDK_C_API <span class="type">int</span> <span class="title">intptrFormJAVA</span><span class="params">(<span class="type">int</span> *inValue)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//导出类</span></span><br><span class="line"><span class="keyword">class</span>  <span class="title class_">Test</span>&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">explicit</span> <span class="title">Test</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">    ~<span class="built_in">Test</span>()&#123;&#125;</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">GetA</span><span class="params">()</span></span>&#123;<span class="keyword">return</span> <span class="number">0</span>;&#125;</span><br><span class="line">    <span class="function"><span class="type">char</span>* <span class="title">GetB</span><span class="params">()</span></span>&#123;<span class="keyword">return</span> <span class="string">&quot;ok&quot;</span>;&#125;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">GetC</span><span class="params">(TestStruct* c)</span></span>&#123;&#125;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">SetA</span><span class="params">(<span class="type">int</span> a)</span></span>&#123;&#125;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">SetB</span><span class="params">(<span class="type">char</span>* b)</span></span>&#123;&#125;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">SetC</span><span class="params">(TestStruct*  c)</span></span>&#123;&#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="type">int</span> a;</span><br><span class="line">    <span class="type">char</span> *b;</span><br><span class="line">    TestStruct c;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="function">SDK_C_API <span class="type">void</span>* <span class="title">Create_jna_SDK</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function">SDK_C_API <span class="type">int</span> <span class="title">SDK_GetA</span><span class="params">(<span class="type">void</span>* SDKptr)</span></span>;</span><br><span class="line"><span class="function">SDK_C_API <span class="type">char</span>* <span class="title">SDK_GetB</span><span class="params">(<span class="type">void</span>* SDKptr)</span></span>;</span><br><span class="line"><span class="function">SDK_C_API <span class="type">void</span> <span class="title">SDK_GetC</span><span class="params">(<span class="type">void</span>* SDKptr,TestStruct* c)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function">SDK_C_API <span class="type">void</span> <span class="title">SDK_SetA</span><span class="params">(<span class="type">void</span>* SDKptr,<span class="type">int</span> a)</span></span>;</span><br><span class="line"><span class="function">SDK_C_API <span class="type">void</span> <span class="title">SD_SetB</span><span class="params">(<span class="type">void</span>* SDKptr,<span class="type">char</span>* b)</span></span>;</span><br><span class="line"><span class="function">SDK_C_API <span class="type">void</span> <span class="title">SDK_setC</span><span class="params">(<span class="type">void</span>* SDKptr,TestStruct* c)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function">SDK_C_API <span class="type">void</span> <span class="title">Destroy_jna_SDK</span><span class="params">(<span class="type">void</span>* SDKptr)</span></span>;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="SDK文件SDK-cpp"><a href="#SDK文件SDK-cpp" class="headerlink" title="SDK文件SDK.cpp"></a>SDK文件<code>SDK.cpp</code></h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> SDK_EXPORTS</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> JNAEXPORTS</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;SDK.h&quot;</span></span></span><br><span class="line"><span class="function"><span class="type">void</span>* <span class="title">Create_jna_SDK</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> (<span class="type">void</span> *)<span class="keyword">new</span> <span class="built_in">Test</span>();</span><br><span class="line">    &#125;<span class="built_in">catch</span>(...)&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">SDK_GetA</span><span class="params">(<span class="type">void</span> *SDKptr)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">auto</span> _sdk=<span class="built_in">reinterpret_cast</span>&lt;Test*&gt;(SDKptr);</span><br><span class="line">    <span class="keyword">return</span> _sdk-&gt;<span class="built_in">GetA</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">char</span> *<span class="title">SDK_GetB</span><span class="params">(<span class="type">void</span> *SDKptr)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">auto</span> _sdk=<span class="built_in">reinterpret_cast</span>&lt;Test*&gt;(SDKptr);</span><br><span class="line">    <span class="keyword">return</span> _sdk-&gt;<span class="built_in">GetB</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">SDK_SetA</span><span class="params">(<span class="type">void</span> *SDKptr, <span class="type">int</span> a)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">auto</span> _sdk=<span class="built_in">reinterpret_cast</span>&lt;Test*&gt;(SDKptr);</span><br><span class="line">    _sdk-&gt;<span class="built_in">Set</span>(a);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">SD_SetB</span><span class="params">(<span class="type">void</span> *SDKptr, <span class="type">char</span> *b)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">auto</span> _sdk=<span class="built_in">reinterpret_cast</span>&lt;Test*&gt;(SDKptr);</span><br><span class="line">    _sdk-&gt;<span class="built_in">Set</span>(b);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">SDK_GetC</span><span class="params">(<span class="type">void</span> *SDKptr, TestStruct *c)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">auto</span> _sdk=<span class="built_in">reinterpret_cast</span>&lt;Test*&gt;(SDKptr);</span><br><span class="line">    _sdk-&gt;<span class="built_in">GetC</span>(c);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">SDK_setC</span><span class="params">(<span class="type">void</span> *SDKptr, TestStruct *c)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">auto</span> _sdk=<span class="built_in">reinterpret_cast</span>&lt;Test*&gt;(SDKptr);</span><br><span class="line">    _sdk-&gt;<span class="built_in">Set</span>(c);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">StringHello</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *inbuffer)</span> </span>&#123;</span><br><span class="line">    inbuffer=<span class="string">&quot;hello JNA&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">intFormJAVA</span><span class="params">(<span class="type">int</span> inValue)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> inValue;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">intptrFormJAVA</span><span class="params">(<span class="type">int</span> *inValue)</span> </span>&#123;</span><br><span class="line">    *inValue=<span class="number">1024</span>;</span><br><span class="line">    <span class="keyword">return</span> *inValue;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">Destroy_jna_SDK</span><span class="params">(<span class="type">void</span> *SDKptr)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">auto</span> _sdk=<span class="built_in">reinterpret_cast</span>&lt;Test*&gt;(SDKptr);</span><br><span class="line">    <span class="keyword">delete</span> _sdk;</span><br><span class="line">    _sdk= <span class="literal">nullptr</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="使用jnaerator-0-12-shaded-jar生产Java代码"><a href="#使用jnaerator-0-12-shaded-jar生产Java代码" class="headerlink" title="使用jnaerator-0.12-shaded.jar生产Java代码"></a>使用<a target="_blank" rel="noopener" href="https://repo1.maven.org/maven2/com/nativelibs4java/jnaerator/0.12/">jnaerator-0.12-shaded.jar</a>生产Java代码</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">java -jar <span class="string">&quot;<span class="variable">$JAVA_HOME</span>/jnaerator-0.12-shaded.jar&quot;</span> -runtime JNA -mode Directory -o SDk_JNA -f -library SDK Release/*.dll SDK/SDK.h  </span><br><span class="line">Normalizing parsed code...</span><br><span class="line">Generating libraries...</span><br><span class="line">Generating TestStruct.java</span><br><span class="line">Generating SDKLibrary.java</span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># SUCCESS: JNAeration completed !</span></span><br><span class="line"><span class="comment"># Output mode is &#x27;Directory(Bindings sources in simple file hierarchy)</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># =&gt; &#x27;F:\Workspace\SDk_JNA&#x27;</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#出现以上信息表示生产成功</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#生产SDK_JNA目录如下</span></span><br><span class="line">├─lib</span><br><span class="line">│  └─win64</span><br><span class="line">└─sdk</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="在java项目中使用DLL"><a href="#在java项目中使用DLL" class="headerlink" title="在java项目中使用DLL"></a>在java项目中使用DLL</h2><p>修改生产的<code>SDKLibrary.java</code>文件</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//原内容：</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">SDKLibrary</span> <span class="keyword">extends</span> <span class="title class_">Library</span> &#123;</span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">String</span> <span class="variable">JNA_LIBRARY_NAME</span> <span class="operator">=</span> <span class="string">&quot;SDK&quot;</span>;</span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">NativeLibrary</span> <span class="variable">JNA_NATIVE_LIB</span> <span class="operator">=</span> NativeLibrary.getInstance(SDKLibrary.JNA_LIBRARY_NAME);</span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">SDKLibrary</span> <span class="variable">INSTANCE</span> <span class="operator">=</span> (SDKLibrary)Native.loadLibrary(SDKLibrary.JNA_LIBRARY_NAME, SDKLibrary.class);</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * \u5bfc\u51fa\u666e\u901a\u51fd\u6570&lt;br&gt;</span></span><br><span class="line"><span class="comment">	 * Original signature : &lt;code&gt;void StringHello(const char*)&lt;/code&gt;&lt;br&gt;</span></span><br><span class="line"><span class="comment">	 * &lt;i&gt;native declaration : SDK\SDK.h:37&lt;/i&gt;&lt;br&gt;</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@deprecated</span> use the safer methods &#123;<span class="doctag">@link</span> #StringHello(java.lang.String)&#125; and &#123;<span class="doctag">@link</span> #StringHello(com.sun.jna.Pointer)&#125; instead</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="meta">@Deprecated</span> </span><br><span class="line">	<span class="keyword">void</span> <span class="title function_">StringHello</span><span class="params">(Pointer inbuffer)</span>;</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * \u5bfc\u51fa\u666e\u901a\u51fd\u6570&lt;br&gt;</span></span><br><span class="line"><span class="comment">	 * Original signature : &lt;code&gt;void StringHello(const char*)&lt;/code&gt;&lt;br&gt;</span></span><br><span class="line"><span class="comment">	 * &lt;i&gt;native declaration : SDK\SDK.h:37&lt;/i&gt;</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">void</span> <span class="title function_">StringHello</span><span class="params">(String inbuffer)</span>;</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * Original signature : &lt;code&gt;int intFormJAVA(int)&lt;/code&gt;&lt;br&gt;</span></span><br><span class="line"><span class="comment">	 * &lt;i&gt;native declaration : SDK\SDK.h:39&lt;/i&gt;</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="type">int</span> <span class="title function_">intFormJAVA</span><span class="params">(<span class="type">int</span> inValue)</span>;</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * Original signature : &lt;code&gt;int intptrFormJAVA(int*)&lt;/code&gt;&lt;br&gt;</span></span><br><span class="line"><span class="comment">	 * &lt;i&gt;native declaration : SDK\SDK.h:41&lt;/i&gt;&lt;br&gt;</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@deprecated</span> use the safer methods &#123;<span class="doctag">@link</span> #intptrFormJAVA(java.nio.IntBuffer)&#125; and &#123;<span class="doctag">@link</span> #intptrFormJAVA(com.sun.jna.ptr.IntByReference)&#125; instead</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="meta">@Deprecated</span> </span><br><span class="line">	<span class="type">int</span> <span class="title function_">intptrFormJAVA</span><span class="params">(IntByReference inValue)</span>;</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * Original signature : &lt;code&gt;int intptrFormJAVA(int*)&lt;/code&gt;&lt;br&gt;</span></span><br><span class="line"><span class="comment">	 * &lt;i&gt;native declaration : SDK\SDK.h:41&lt;/i&gt;</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="type">int</span> <span class="title function_">intptrFormJAVA</span><span class="params">(IntBuffer inValue)</span>;</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * Original signature : &lt;code&gt;void* Create_jna_SDK()&lt;/code&gt;&lt;br&gt;</span></span><br><span class="line"><span class="comment">	 * &lt;i&gt;native declaration : SDK\SDK.h:60&lt;/i&gt;</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	Pointer <span class="title function_">Create_jna_SDK</span><span class="params">()</span>;</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * Original signature : &lt;code&gt;int SDK_GetA(void*)&lt;/code&gt;&lt;br&gt;</span></span><br><span class="line"><span class="comment">	 * &lt;i&gt;native declaration : SDK\SDK.h:61&lt;/i&gt;</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="type">int</span> <span class="title function_">SDK_GetA</span><span class="params">(Pointer SDKptr)</span>;</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * Original signature : &lt;code&gt;char* SDK_GetB(void*)&lt;/code&gt;&lt;br&gt;</span></span><br><span class="line"><span class="comment">	 * &lt;i&gt;native declaration : SDK\SDK.h:62&lt;/i&gt;</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	Pointer <span class="title function_">SDK_GetB</span><span class="params">(Pointer SDKptr)</span>;</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * Original signature : &lt;code&gt;void SDK_GetC(void*, TestStruct*)&lt;/code&gt;&lt;br&gt;</span></span><br><span class="line"><span class="comment">	 * &lt;i&gt;native declaration : SDK\SDK.h:63&lt;/i&gt;</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">void</span> <span class="title function_">SDK_GetC</span><span class="params">(Pointer SDKptr, TestStruct c)</span>;</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * Original signature : &lt;code&gt;void SDK_SetA(void*, int)&lt;/code&gt;&lt;br&gt;</span></span><br><span class="line"><span class="comment">	 * &lt;i&gt;native declaration : SDK\SDK.h:64&lt;/i&gt;</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">void</span> <span class="title function_">SDK_SetA</span><span class="params">(Pointer SDKptr, <span class="type">int</span> a)</span>;</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * Original signature : &lt;code&gt;void SD_SetB(void*, char*)&lt;/code&gt;&lt;br&gt;</span></span><br><span class="line"><span class="comment">	 * &lt;i&gt;native declaration : SDK\SDK.h:65&lt;/i&gt;&lt;br&gt;</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@deprecated</span> use the safer methods &#123;<span class="doctag">@link</span> #SD_SetB(com.sun.jna.Pointer, java.nio.ByteBuffer)&#125; and &#123;<span class="doctag">@link</span> #SD_SetB(com.sun.jna.Pointer, com.sun.jna.Pointer)&#125; instead</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="meta">@Deprecated</span> </span><br><span class="line">	<span class="keyword">void</span> <span class="title function_">SD_SetB</span><span class="params">(Pointer SDKptr, Pointer b)</span>;</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * Original signature : &lt;code&gt;void SD_SetB(void*, char*)&lt;/code&gt;&lt;br&gt;</span></span><br><span class="line"><span class="comment">	 * &lt;i&gt;native declaration : SDK\SDK.h:65&lt;/i&gt;</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">void</span> <span class="title function_">SD_SetB</span><span class="params">(Pointer SDKptr, ByteBuffer b)</span>;</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * Original signature : &lt;code&gt;void SDK_setC(void*, TestStruct*)&lt;/code&gt;&lt;br&gt;</span></span><br><span class="line"><span class="comment">	 * &lt;i&gt;native declaration : SDK\SDK.h:66&lt;/i&gt;</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">void</span> <span class="title function_">SDK_setC</span><span class="params">(Pointer SDKptr, TestStruct c)</span>;</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * Original signature : &lt;code&gt;void Destroy_jna_SDK(void*)&lt;/code&gt;&lt;br&gt;</span></span><br><span class="line"><span class="comment">	 * &lt;i&gt;native declaration : SDK\SDK.h:67&lt;/i&gt;</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">void</span> <span class="title function_">Destroy_jna_SDK</span><span class="params">(Pointer SDKptr)</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//修改后：</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SDKLibrary</span>&#123;</span><br><span class="line"></span><br><span class="line">	Pointer per=<span class="literal">null</span>;</span><br><span class="line">	<span class="keyword">public</span> <span class="title function_">SDKLibrary</span><span class="params">()</span>&#123;</span><br><span class="line">		per=CLibrary.INSTANCE.Create_jna_SDK();</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">interface</span> <span class="title class_">CLibrary</span>  <span class="keyword">extends</span> <span class="title class_">Library</span>&#123;</span><br><span class="line">		<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">String</span> <span class="variable">JNA_LIBRARY_NAME</span> <span class="operator">=</span> <span class="string">&quot;SDK&quot;</span>;</span><br><span class="line">		<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">NativeLibrary</span> <span class="variable">JNA_NATIVE_LIB</span> <span class="operator">=</span> NativeLibrary.getInstance(<span class="string">&quot;DLL/&quot;</span>+CLibrary.JNA_LIBRARY_NAME);</span><br><span class="line">		<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">CLibrary</span> <span class="variable">INSTANCE</span> <span class="operator">=</span> (CLibrary)Native.loadLibrary(<span class="string">&quot;DLL/&quot;</span>+CLibrary.JNA_LIBRARY_NAME, CLibrary.class);</span><br><span class="line">		<span class="comment">/**</span></span><br><span class="line"><span class="comment">		 * \u5bfc\u51fa\u666e\u901a\u51fd\u6570&lt;br&gt;</span></span><br><span class="line"><span class="comment">		 * Original signature : &lt;code&gt;void StringHello(const char*)&lt;/code&gt;&lt;br&gt;</span></span><br><span class="line"><span class="comment">		 * &lt;i&gt;native declaration : SDK\SDK.h:37&lt;/i&gt;&lt;br&gt;</span></span><br><span class="line"><span class="comment">		 * <span class="doctag">@deprecated</span> use the safer methods &#123;<span class="doctag">@link</span> #StringHello(String)&#125; and &#123;<span class="doctag">@link</span> #StringHello(Pointer)&#125; instead</span></span><br><span class="line"><span class="comment">		 */</span></span><br><span class="line">		<span class="meta">@Deprecated</span></span><br><span class="line">		<span class="keyword">void</span> <span class="title function_">StringHello</span><span class="params">(Pointer inbuffer)</span>;</span><br><span class="line">		<span class="comment">/**</span></span><br><span class="line"><span class="comment">		 * \u5bfc\u51fa\u666e\u901a\u51fd\u6570&lt;br&gt;</span></span><br><span class="line"><span class="comment">		 * Original signature : &lt;code&gt;void StringHello(const char*)&lt;/code&gt;&lt;br&gt;</span></span><br><span class="line"><span class="comment">		 * &lt;i&gt;native declaration : SDK\SDK.h:37&lt;/i&gt;</span></span><br><span class="line"><span class="comment">		 */</span></span><br><span class="line">		<span class="keyword">void</span> <span class="title function_">StringHello</span><span class="params">(String inbuffer)</span>;</span><br><span class="line">		<span class="comment">/**</span></span><br><span class="line"><span class="comment">		 * Original signature : &lt;code&gt;int intFormJAVA(int)&lt;/code&gt;&lt;br&gt;</span></span><br><span class="line"><span class="comment">		 * &lt;i&gt;native declaration : SDK\SDK.h:39&lt;/i&gt;</span></span><br><span class="line"><span class="comment">		 */</span></span><br><span class="line">		<span class="type">int</span> <span class="title function_">intFormJAVA</span><span class="params">(<span class="type">int</span> inValue)</span>;</span><br><span class="line">		<span class="comment">/**</span></span><br><span class="line"><span class="comment">		 * Original signature : &lt;code&gt;int intptrFormJAVA(int*)&lt;/code&gt;&lt;br&gt;</span></span><br><span class="line"><span class="comment">		 * &lt;i&gt;native declaration : SDK\SDK.h:41&lt;/i&gt;&lt;br&gt;</span></span><br><span class="line"><span class="comment">		 * <span class="doctag">@deprecated</span> use the safer methods &#123;<span class="doctag">@link</span> #intptrFormJAVA(IntBuffer)&#125; and &#123;<span class="doctag">@link</span> #intptrFormJAVA(IntByReference)&#125; instead</span></span><br><span class="line"><span class="comment">		 */</span></span><br><span class="line">		<span class="meta">@Deprecated</span></span><br><span class="line">		<span class="type">int</span> <span class="title function_">intptrFormJAVA</span><span class="params">(IntByReference inValue)</span>;</span><br><span class="line">		<span class="comment">/**</span></span><br><span class="line"><span class="comment">		 * Original signature : &lt;code&gt;int intptrFormJAVA(int*)&lt;/code&gt;&lt;br&gt;</span></span><br><span class="line"><span class="comment">		 * &lt;i&gt;native declaration : SDK\SDK.h:41&lt;/i&gt;</span></span><br><span class="line"><span class="comment">		 */</span></span><br><span class="line">		<span class="type">int</span> <span class="title function_">intptrFormJAVA</span><span class="params">(IntBuffer inValue)</span>;</span><br><span class="line">		<span class="comment">/**</span></span><br><span class="line"><span class="comment">		 * Original signature : &lt;code&gt;void* Create_jna_SDK()&lt;/code&gt;&lt;br&gt;</span></span><br><span class="line"><span class="comment">		 * &lt;i&gt;native declaration : SDK\SDK.h:60&lt;/i&gt;</span></span><br><span class="line"><span class="comment">		 */</span></span><br><span class="line">		Pointer <span class="title function_">Create_jna_SDK</span><span class="params">()</span>;</span><br><span class="line">		<span class="comment">/**</span></span><br><span class="line"><span class="comment">		 * Original signature : &lt;code&gt;int SDK_GetA(void*)&lt;/code&gt;&lt;br&gt;</span></span><br><span class="line"><span class="comment">		 * &lt;i&gt;native declaration : SDK\SDK.h:61&lt;/i&gt;</span></span><br><span class="line"><span class="comment">		 */</span></span><br><span class="line">		<span class="type">int</span> <span class="title function_">SDK_GetA</span><span class="params">(Pointer SDKptr)</span>;</span><br><span class="line">		<span class="comment">/**</span></span><br><span class="line"><span class="comment">		 * Original signature : &lt;code&gt;char* SDK_GetB(void*)&lt;/code&gt;&lt;br&gt;</span></span><br><span class="line"><span class="comment">		 * &lt;i&gt;native declaration : SDK\SDK.h:62&lt;/i&gt;</span></span><br><span class="line"><span class="comment">		 */</span></span><br><span class="line">		Pointer <span class="title function_">SDK_GetB</span><span class="params">(Pointer SDKptr)</span>;</span><br><span class="line">		<span class="comment">/**</span></span><br><span class="line"><span class="comment">		 * Original signature : &lt;code&gt;void SDK_GetC(void*, TestStruct*)&lt;/code&gt;&lt;br&gt;</span></span><br><span class="line"><span class="comment">		 * &lt;i&gt;native declaration : SDK\SDK.h:63&lt;/i&gt;</span></span><br><span class="line"><span class="comment">		 */</span></span><br><span class="line">		<span class="keyword">void</span> <span class="title function_">SDK_GetC</span><span class="params">(Pointer SDKptr, TestStruct c)</span>;</span><br><span class="line">		<span class="comment">/**</span></span><br><span class="line"><span class="comment">		 * Original signature : &lt;code&gt;void SDK_SetA(void*, int)&lt;/code&gt;&lt;br&gt;</span></span><br><span class="line"><span class="comment">		 * &lt;i&gt;native declaration : SDK\SDK.h:64&lt;/i&gt;</span></span><br><span class="line"><span class="comment">		 */</span></span><br><span class="line">		<span class="keyword">void</span> <span class="title function_">SDK_SetA</span><span class="params">(Pointer SDKptr, <span class="type">int</span> a)</span>;</span><br><span class="line">		<span class="comment">/**</span></span><br><span class="line"><span class="comment">		 * Original signature : &lt;code&gt;void SD_SetB(void*, char*)&lt;/code&gt;&lt;br&gt;</span></span><br><span class="line"><span class="comment">		 * &lt;i&gt;native declaration : SDK\SDK.h:65&lt;/i&gt;&lt;br&gt;</span></span><br><span class="line"><span class="comment">		 * <span class="doctag">@deprecated</span> use the safer methods &#123;<span class="doctag">@link</span> #SD_SetB(Pointer, ByteBuffer)&#125; and &#123;<span class="doctag">@link</span> #SD_SetB(Pointer, Pointer)&#125; instead</span></span><br><span class="line"><span class="comment">		 */</span></span><br><span class="line">		<span class="meta">@Deprecated</span></span><br><span class="line">		<span class="keyword">void</span> <span class="title function_">SD_SetB</span><span class="params">(Pointer SDKptr, Pointer b)</span>;</span><br><span class="line">		<span class="comment">/**</span></span><br><span class="line"><span class="comment">		 * Original signature : &lt;code&gt;void SD_SetB(void*, char*)&lt;/code&gt;&lt;br&gt;</span></span><br><span class="line"><span class="comment">		 * &lt;i&gt;native declaration : SDK\SDK.h:65&lt;/i&gt;</span></span><br><span class="line"><span class="comment">		 */</span></span><br><span class="line">		<span class="keyword">void</span> <span class="title function_">SD_SetB</span><span class="params">(Pointer SDKptr, ByteBuffer b)</span>;</span><br><span class="line">		<span class="comment">/**</span></span><br><span class="line"><span class="comment">		 * Original signature : &lt;code&gt;void SDK_setC(void*, TestStruct*)&lt;/code&gt;&lt;br&gt;</span></span><br><span class="line"><span class="comment">		 * &lt;i&gt;native declaration : SDK\SDK.h:66&lt;/i&gt;</span></span><br><span class="line"><span class="comment">		 */</span></span><br><span class="line">		<span class="keyword">void</span> <span class="title function_">SDK_setC</span><span class="params">(Pointer SDKptr, TestStruct c)</span>;</span><br><span class="line">		<span class="comment">/**</span></span><br><span class="line"><span class="comment">		 * Original signature : &lt;code&gt;void Destroy_jna_SDK(void*)&lt;/code&gt;&lt;br&gt;</span></span><br><span class="line"><span class="comment">		 * &lt;i&gt;native declaration : SDK\SDK.h:67&lt;/i&gt;</span></span><br><span class="line"><span class="comment">		 */</span></span><br><span class="line">		<span class="keyword">void</span> <span class="title function_">Destroy_jna_SDK</span><span class="params">(Pointer SDKptr)</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">StringHello</span><span class="params">()</span>&#123;CLibrary.INSTANCE.StringHello(<span class="string">&quot;Hello C++&quot;</span>);&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="type">int</span> <span class="title function_">GetA</span><span class="params">()</span>&#123;<span class="keyword">return</span> CLibrary.INSTANCE.SDK_GetA(per);&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">SetA</span><span class="params">(<span class="type">int</span> a)</span>&#123;CLibrary.INSTANCE.SDK_SetA(per,a);&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">SetC</span><span class="params">(TestStruct C)</span>&#123;CLibrary.INSTANCE.SDK_setC(per,C);&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">Destroy</span><span class="params">()</span>&#123;CLibrary.INSTANCE.Destroy_jna_SDK(per);&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<p><img src="https://blog.feizhufanfan.top:18088/minio/images/blog/20230209154111.png" alt="项目结构">  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">至此便可以调用C++的DLL库了</span><br><span class="line"><span class="comment">//项目结构</span></span><br><span class="line">├─lib</span><br><span class="line">└─src</span><br><span class="line">    ├─Resources</span><br><span class="line">    │  └─DLL</span><br><span class="line">    └─sdk</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Main</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Hello world!&quot;</span>);</span><br><span class="line"></span><br><span class="line">        SDKLibrary sdk=<span class="keyword">new</span> <span class="title class_">SDKLibrary</span>();</span><br><span class="line"></span><br><span class="line">        sdk.SetA(<span class="number">123</span>);</span><br><span class="line"></span><br><span class="line">        TestStruct.ByValue sd=<span class="keyword">new</span> <span class="title class_">TestStruct</span>.ByValue();</span><br><span class="line">        </span><br><span class="line">        sdk.SetC(sd);</span><br><span class="line">        </span><br><span class="line">        sdk.Destroy();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/JAVA/" rel="tag"># JAVA</a>
+              <a href="/tags/C/" rel="tag"># C++</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/01/14/2023%E5%B9%B41%E6%9C%8814%E6%97%A5/" rel="prev" title="2023年1月14日">
+      <i class="fa fa-chevron-left"></i> 2023年1月14日
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/02/26/%E6%B5%81%E5%AA%92%E4%BD%93%E5%8D%8F%E8%AE%AE%E2%80%94%E2%80%94RTSP/" rel="next" title="流媒体协议——RTSP">
+      流媒体协议——RTSP <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">JNA使用范例</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#JAVA%E3%80%81C-%E5%8F%98%E9%87%8F%E6%98%A0%E5%B0%84%E8%A1%A8"><span class="nav-number">1.1.</span> <span class="nav-text">JAVA、C++变量映射表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#C-%E7%AB%AF%E7%A8%8B%E5%BA%8F%E7%A4%BA%E4%BE%8B%E7%94%9F%E4%BA%A7DLL-x2F-SO%E5%BA%93"><span class="nav-number">1.2.</span> <span class="nav-text">C++端程序示例生产DLL&#x2F;SO库</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SDK%E5%A4%B4%E6%96%87%E4%BB%B6SDK-h"><span class="nav-number">1.2.1.</span> <span class="nav-text">SDK头文件SDK.h</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SDK%E6%96%87%E4%BB%B6SDK-cpp"><span class="nav-number">1.2.2.</span> <span class="nav-text">SDK文件SDK.cpp</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8jnaerator-0-12-shaded-jar%E7%94%9F%E4%BA%A7Java%E4%BB%A3%E7%A0%81"><span class="nav-number">1.3.</span> <span class="nav-text">使用jnaerator-0.12-shaded.jar生产Java代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%A8java%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8DLL"><span class="nav-number">1.4.</span> <span class="nav-text">在java项目中使用DLL</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Mr.du</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+          <span class="site-state-item-count">75</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">68</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">63</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/feizhufanfan" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;feizhufanfan" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1009963012@qq.com" title="E-Mail → mailto:1009963012@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2015 – 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Mr.du</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

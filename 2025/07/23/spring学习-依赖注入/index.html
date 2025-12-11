@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"feizhufanfan.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Spring核心基础–依赖注入（构造器注入、Setter注入、字段注入）一、依赖注入（Dependency Injection, DI）概述依赖注入是Spring框架实现控制反转（IoC） 的主要技术手段。它的核心思想是：  传统方式： 对象自己负责创建或查找它所依赖的对象（主动控制）。对象主动创建依赖（强耦合） 代码示例12345&#x2F;&#x2F; 传统方式：对象自己创建依赖class Service &amp;#1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="spring学习--依赖注入">
+<meta property="og:url" content="https://feizhufanfan.github.io/2025/07/23/spring%E5%AD%A6%E4%B9%A0-%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5/index.html">
+<meta property="og:site_name" content="鲜奶鱼板面">
+<meta property="og:description" content="Spring核心基础–依赖注入（构造器注入、Setter注入、字段注入）一、依赖注入（Dependency Injection, DI）概述依赖注入是Spring框架实现控制反转（IoC） 的主要技术手段。它的核心思想是：  传统方式： 对象自己负责创建或查找它所依赖的对象（主动控制）。对象主动创建依赖（强耦合） 代码示例12345&#x2F;&#x2F; 传统方式：对象自己创建依赖class Service &amp;#1">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-07-23T03:20:33.000Z">
+<meta property="article:modified_time" content="2025-12-11T16:53:07.479Z">
+<meta property="article:author" content="Mr.du">
+<meta property="article:tag" content="java">
+<meta property="article:tag" content="spring">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://feizhufanfan.github.io/2025/07/23/spring%E5%AD%A6%E4%B9%A0-%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>spring学习--依赖注入 | 鲜奶鱼板面</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">鲜奶鱼板面</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-主页">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>主页</a>
+
+  </li>
+        <li class="menu-item menu-item-标签">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-技术">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>技术</a>
+
+  </li>
+        <li class="menu-item menu-item-life">
+
+    <a href="/categories/%E9%9A%8F%E7%AC%94/" rel="section"><i class="fa fa-pizza-slice fa-fw"></i>生活</a>
+
+  </li>
+        <li class="menu-item menu-item-归档">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://feizhufanfan.github.io/2025/07/23/spring%E5%AD%A6%E4%B9%A0-%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Mr.du">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鲜奶鱼板面">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          spring学习--依赖注入
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-07-23 11:20:33" itemprop="dateCreated datePublished" datetime="2025-07-23T11:20:33+08:00">2025-07-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-12-12 00:53:07" itemprop="dateModified" datetime="2025-12-12T00:53:07+08:00">2025-12-12</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/spring/" itemprop="url" rel="index"><span itemprop="name">spring</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/spring/%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5/" itemprop="url" rel="index"><span itemprop="name">依赖注入</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Spring核心基础–依赖注入（构造器注入、Setter注入、字段注入）"><a href="#Spring核心基础–依赖注入（构造器注入、Setter注入、字段注入）" class="headerlink" title="Spring核心基础–依赖注入（构造器注入、Setter注入、字段注入）"></a>Spring核心基础–依赖注入（构造器注入、Setter注入、字段注入）</h1><h2 id="一、依赖注入（Dependency-Injection-DI）概述"><a href="#一、依赖注入（Dependency-Injection-DI）概述" class="headerlink" title="一、依赖注入（Dependency Injection, DI）概述"></a>一、依赖注入（Dependency Injection, DI）概述</h2><p>依赖注入是Spring框架实现<strong>控制反转（IoC）</strong> 的主要技术手段。它的核心思想是：</p>
+<ul>
+<li><strong>传统方式：</strong> 对象自己负责创建或查找它所依赖的对象（主动控制）。对象主动创建依赖（强耦合）</li>
+<li><strong>代码示例</strong><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 传统方式：对象自己创建依赖</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Service</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">Repository</span> <span class="variable">repo</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">DatabaseRepository</span>(); <span class="comment">// 直接实例化</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+<li><strong>依赖注入：</strong> 对象的依赖关系由外部容器（如Spring）在创建对象时<strong>注入</strong>（被动接受）。对象只需要声明它需要什么依赖，而不需要关心如何获取它们。依赖由外部容器提供（解耦）</li>
+<li><strong>代码示例</strong><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// DI方式：依赖从外部注入</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Service</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> Repository repo;</span><br><span class="line">    <span class="comment">// 通过构造器/Setter/字段接收依赖</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="依赖注入的好处"><a href="#依赖注入的好处" class="headerlink" title="依赖注入的好处"></a>依赖注入的好处</h3><ol>
+<li><strong>解耦（Decoupling）：</strong> 对象不需要知道其依赖的具体实现或如何创建它们，只依赖于接口或抽象。这降低了类之间的耦合度。</li>
+<li><strong>可测试性（Testability）：</strong> 可以轻松地用模拟对象（Mock）替换实际依赖，便于进行单元测试。</li>
+<li><strong>可维护性（Maintainability）：</strong> 配置集中管理，修改依赖关系通常只需要改动配置（注解或XML），而不需要修改使用这些依赖的类代码。</li>
+<li><strong>可重用性（Reusability）：</strong> 组件更易于在不同环境中重用，因为它们不负责管理自己的依赖。</li>
+</ol>
+<hr>
+<h2 id="二、三种依赖注入方式详解与比较"><a href="#二、三种依赖注入方式详解与比较" class="headerlink" title="二、三种依赖注入方式详解与比较"></a>二、三种依赖注入方式详解与比较</h2><p>Spring支持三种主要的依赖注入方式：</p>
+<h3 id="1-构造器注入（Constructor-Injection）"><a href="#1-构造器注入（Constructor-Injection）" class="headerlink" title="1. 构造器注入（Constructor Injection）"></a>1. 构造器注入（Constructor Injection）</h3><ul>
+<li><strong>原理：</strong> 通过类的<strong>构造函数</strong>来注入依赖。Spring容器在创建Bean时，会调用带有需要注入依赖参数的构造函数。</li>
+<li><strong>实现方式：</strong><ul>
+<li><strong>XML配置：</strong> 使用<code>&lt;constructor-arg&gt;</code>元素。</li>
+<li><strong>Java注解：</strong> 在构造方法上使用<code>@Autowired</code>（Spring 4.3以后，如果类只有一个构造器，可以省略<code>@Autowired</code>）。</li>
+<li><strong>Java配置类：</strong> 在<code>@Bean</code>方法中显式调用构造函数并传入参数。</li>
+</ul>
+</li>
+<li><strong>代码示例：</strong><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">OrderService</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> PaymentProcessor paymentProcessor; <span class="comment">// 推荐使用final确保不变性</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> InventoryService inventoryService;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 构造器注入（Spring 4.3+ 单个构造器可省略@Autowired）</span></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">OrderService</span><span class="params">(PaymentProcessor paymentProcessor, InventoryService inventoryService)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.paymentProcessor = paymentProcessor;</span><br><span class="line">        <span class="built_in">this</span>.inventoryService = inventoryService;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">processOrder</span><span class="params">(Order order)</span> &#123;</span><br><span class="line">        <span class="comment">// 使用paymentProcessor和inventoryService处理订单</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><strong>优点：</strong><ul>
+<li><strong>不可变性（Immutability）：</strong> 可以将依赖字段声明为<code>final</code>，确保它们在对象创建后被正确初始化且不可变。这增强了线程安全性和对象状态的稳定性。</li>
+<li><strong>完全初始化的状态：</strong> 对象一旦创建，其所有必需的依赖都已就绪，保证了对象在使用的任何时候都处于一个完整、一致的状态（避免了部分注入导致的状态不一致）。</li>
+<li><strong>明确依赖：</strong> 构造函数清晰地声明了创建对象所必需的所有依赖项。这使代码意图更明确，也方便在单元测试中手动构造对象（无需容器）。</li>
+<li><strong>避免循环依赖：</strong> 如果使用构造器注入，Spring在启动时就能检测到循环依赖（A依赖B，B又依赖A）并抛出<code>BeanCurrentlyInCreationException</code>，迫使你重构设计，避免潜在的运行时问题。</li>
+<li><strong>与框架无关：</strong> 构造器注入不依赖特定的注解（除了可选的<code>@Autowired</code>），是更纯粹的Java代码。</li>
+</ul>
+</li>
+<li><strong>缺点：</strong><ul>
+<li>如果依赖项很多，构造函数参数列表会很长，可能影响可读性（这时可能是类职责过多的信号，应考虑重构）。</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-Setter-注入（Setter-Injection）"><a href="#2-Setter-注入（Setter-Injection）" class="headerlink" title="2. Setter 注入（Setter Injection）"></a>2. Setter 注入（Setter Injection）</h3><ul>
+<li><strong>原理：</strong> 通过类的<strong>Setter方法</strong>来注入依赖。Spring容器在调用无参构造函数（或工厂方法）创建Bean实例后，再调用相应的Setter方法来设置依赖。</li>
+<li><strong>实现方式：</strong><ul>
+<li><strong>XML配置：</strong> 使用<code>&lt;property&gt;</code>元素。</li>
+<li><strong>Java注解：</strong> 在Setter方法上使用<code>@Autowired</code>。</li>
+</ul>
+</li>
+<li><strong>代码示例：</strong><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">CustomerService</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> CustomerRepository customerRepository;</span><br><span class="line">    <span class="keyword">private</span> EmailService emailService;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Setter注入（通常方法名为setXxx）</span></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setCustomerRepository</span><span class="params">(CustomerRepository customerRepository)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.customerRepository = customerRepository;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setEmailService</span><span class="params">(EmailService emailService)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.emailService = emailService;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">registerCustomer</span><span class="params">(Customer customer)</span> &#123;</span><br><span class="line">        <span class="comment">// 使用customerRepository和emailService</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><strong>优点：</strong><ul>
+<li><strong>灵活性：</strong> 可以在对象创建后<strong>动态地</strong>改变依赖（虽然在实际应用中很少需要这样做）。适合可选的依赖或配置可能变化的依赖。</li>
+<li><strong>可读性（对于可选依赖）：</strong> 对于非必需的依赖，Setter方法可以更清晰地表示它们是可选的（构造器注入要求所有依赖在创建时提供）。</li>
+<li><strong>解决循环依赖：</strong> Spring可以通过先实例化对象（调用无参构造），再注入依赖的方式处理某些构造器注入无法解决的循环依赖（但这通常是设计有问题的征兆）。</li>
+</ul>
+</li>
+<li><strong>缺点：</strong><ul>
+<li><strong>对象状态可能不完整：</strong> 在Setter方法被调用之前，对象可能处于依赖缺失的状态（部分注入）。如果其他方法在依赖未设置时被调用，会导致<code>NullPointerException</code>。</li>
+<li><strong>可变性：</strong> 依赖字段通常不能设为<code>final</code>，意味着它们可能在对象生命周期中被改变（除非Setter方法有保护逻辑），这降低了线程安全性和状态稳定性。</li>
+<li><strong>不如构造器注入明确：</strong> 一个类可能有多个Setter方法，哪些依赖是必需的，哪些是可选的，不如构造器注入一目了然。</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-字段注入（Field-Injection）"><a href="#3-字段注入（Field-Injection）" class="headerlink" title="3. 字段注入（Field Injection）"></a>3. 字段注入（Field Injection）</h3><ul>
+<li><strong>原理：</strong> 直接在类的<strong>字段（成员变量）</strong> 上使用注解（如<code>@Autowired</code>）进行注入。Spring容器通过反射机制直接设置字段的值，不需要构造器或Setter方法。</li>
+<li><strong>实现方式：</strong><ul>
+<li><strong>Java注解：</strong> 在字段上直接使用<code>@Autowired</code>（最常见）或<code>@Resource</code>(JSR-250)。</li>
+</ul>
+</li>
+<li><strong>代码示例：</strong><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ProductService</span> &#123;</span><br><span class="line">    <span class="meta">@Autowired</span> <span class="comment">// 直接注入到字段</span></span><br><span class="line">    <span class="keyword">private</span> ProductRepository productRepository;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> DiscountCalculator discountCalculator;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Product <span class="title function_">getProductById</span><span class="params">(String id)</span> &#123;</span><br><span class="line">        <span class="comment">// 使用productRepository和discountCalculator</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><strong>优点：</strong><ul>
+<li><strong>简洁：</strong> 代码量最少，没有样板代码（没有构造器或Setter方法）。看起来非常简洁。</li>
+</ul>
+</li>
+<li><strong>缺点：</strong><ul>
+<li><strong>违反封装性：</strong> 字段通常是<code>private</code>的，但注入绕过了正常的访问控制（通过反射直接设置私有字段），破坏了类的封装性。</li>
+<li><strong>不可变性和final：</strong> 由于注入发生在对象构造之后（通过反射），你<strong>不能</strong>将注入的字段声明为<code>final</code>（否则编译错误），失去了不可变性带来的好处。</li>
+<li><strong>隐藏依赖：</strong> 依赖关系完全隐藏在类内部。从类的外部看（只看公共API如构造器和方法），无法知道这个类依赖哪些组件。这使得单元测试变得困难（必须使用Spring容器或反射来注入依赖，无法通过构造器或Setter手动注入Mock）。</li>
+<li><strong>与容器强耦合：</strong> 字段注入高度依赖于Spring容器。如果你想在非Spring环境中复用这个类（例如，在普通Java应用中手动<code>new</code>一个实例），将无法初始化这些依赖字段，因为它们不会被自动注入。</li>
+<li><strong>难以进行依赖检查：</strong> 对于必需的依赖，如果容器找不到合适的Bean来注入，错误只会在运行时（实际使用该字段时）才暴露（可能抛出<code>NullPointerException</code>）。而构造器注入在启动时就能发现缺失依赖。</li>
+</ul>
+</li>
+</ul>
+<div class="markdown-table-wrapper"><table><thead><tr><th>特性</th><th>构造器注入</th><th>Setter注入</th><th>字段注入</th></tr></thead><tbody><tr><td><strong>实现方式</strong></td><td>通过构造函数参数</td><td>通过Setter方法</td><td>直接在字段上添加注解</td></tr><tr><td><strong>代码示例</strong></td><td><code>public A(B b) &#123; this.b=b; &#125;</code></td><td><code>public void setB(B b) &#123;...&#125;</code></td><td><code>@Autowired private B b;</code></td></tr><tr><td><strong>不可变性</strong></td><td>✅ (字段可声明final)</td><td>❌</td><td>❌</td></tr><tr><td><strong>对象完整性</strong></td><td>✅ (创建即完整状态)</td><td>❌ (可能处于部分初始化状态)</td><td>❌</td></tr><tr><td><strong>循环依赖检测</strong></td><td>✅ (启动时报错)</td><td>⚠️ (Spring可处理)</td><td>⚠️ (Spring可处理)</td></tr><tr><td><strong>可测试性</strong></td><td>✅ (无需框架即可测试)</td><td>✅</td><td>❌ (需反射或Spring容器)</td></tr><tr><td><strong>Null安全性</strong></td><td>✅ (强制依赖非空)</td><td>❌ (可能漏注入)</td><td>❌</td></tr><tr><td><strong>推荐度</strong></td><td>⭐⭐⭐⭐ (Spring官方推荐)</td><td>⭐⭐⭐</td><td>⭐ (不推荐)</td></tr></tbody></table></div>
+## 三、详细解析与代码示例
+### 1.构造器注入（Constructor Injection）  
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">OrderService</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> PaymentGateway paymentGateway; <span class="comment">// final确保不变性</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> InventoryService inventoryService;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 构造器注入（Spring 4.3+ 可省略@Autowired）</span></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">OrderService</span><span class="params">(PaymentGateway paymentGateway, </span></span><br><span class="line"><span class="params">                        InventoryService inventoryService)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.paymentGateway = paymentGateway;</span><br><span class="line">        <span class="built_in">this</span>.inventoryService = inventoryService;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+*   **优点**
+    *   **强制依赖**：确保对象创建时所有必需依赖已就绪
+    *   **线程安全**：依赖字段可声明为final
+    *   **避免NPE**：启动时立即发现缺失依赖
+    *   **清晰可见**：通过构造函数明确依赖关系
+*   **缺点**
+    *   参数较多时影响可读性（可能是代码坏味道）
+### 2.Setter注入（Setter Injection）  
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserService</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> UserRepository userRepository;</span><br><span class="line">    <span class="keyword">private</span> EmailService emailService;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Setter注入（可选依赖）</span></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setUserRepository</span><span class="params">(UserRepository userRepository)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.userRepository = userRepository;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 另一个Setter</span></span><br><span class="line">    <span class="meta">@Autowired(required = false)</span> <span class="comment">// 非必需依赖</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setEmailService</span><span class="params">(EmailService emailService)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.emailService = emailService;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>优点</strong>：<ul>
+<li><strong>灵活性</strong>：支持可选依赖（required&#x3D;false）</li>
+<li><strong>可重新注入</strong>：允许运行时更换实现</li>
+<li><strong>解决循环依赖</strong>：Spring特有解决方案</li>
+</ul>
+</li>
+<li><strong>缺点</strong>：<ul>
+<li>对象可能处于不完整状态</li>
+<li>需手动检查依赖是否初始化</li>
+<li>线程安全问题（非final字段）</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-字段注入（Field-Injection）-1"><a href="#3-字段注入（Field-Injection）-1" class="headerlink" title="3.字段注入（Field Injection）"></a>3.字段注入（Field Injection）</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ProductService</span> &#123;</span><br><span class="line">    <span class="meta">@Autowired</span>  <span class="comment">// 不推荐！</span></span><br><span class="line">    <span class="keyword">private</span> ProductRepository productRepository;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> DiscountCalculator discountCalculator;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong>优点</strong>：<ul>
+<li>代码简洁（无样板代码）</li>
+</ul>
+</li>
+<li><strong>致命缺点</strong>：<ul>
+<li><strong>破坏封装性</strong>：反射直接修改私有字段</li>
+<li><strong>不可测试</strong>：无法脱离Spring容器实例化对象</li>
+<li><strong>隐藏依赖</strong>：从类外部无法感知依赖需求</li>
+<li><strong>循环依赖风险</strong>：设计问题被掩盖</li>
+<li><strong>无法声明final</strong>：失去不变性保证</li>
+</ul>
+</li>
+</ul>
+<h2 id="四、最佳实践推荐"><a href="#四、最佳实践推荐" class="headerlink" title="四、最佳实践推荐"></a>四、最佳实践推荐</h2><ol>
+<li><strong>首选构造器注入</strong>（Spring官方推荐）<ul>
+<li>强制依赖</li>
+<li>核心业务组件</li>
+<li>需要不可变性的场景<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="meta">@RequiredArgsConstructor</span> <span class="comment">// Lombok自动生成构造器</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">OrderProcessor</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> PaymentService paymentService;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> InventoryService inventoryService;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><strong>谨慎使用Setter注入</strong><ul>
+<li>可选依赖（如<code>@Autowired(required=false)</code>）</li>
+<li>需要动态更换实现的场景</li>
+<li>遗留代码兼容</li>
+</ul>
+</li>
+<li><strong>避免字段注入</strong><ul>
+<li>新项目禁止使用</li>
+<li>旧项目逐步重构替换</li>
+</ul>
+</li>
+<li><strong>特殊场景处理</strong><pre><code class="java">// 混合使用示例
+@Service
+public class HybridExample &#123;
+    private final MandatoryService mandatory; // 必需依赖
+    
+    private OptionalService optional; // 可选依赖
+    
+    @Autowired
+    public HybridExample(MandatoryService mandatory) &#123;
+        this.mandatory = mandatory;
+    &#125;
+    
+    @Autowired(required = false)
+    public void setOptionalService(OptionalService optional) &#123;
+        this.optional = optional;
+    &#125;
+&#125;
+</code></pre>
+</li>
+</ol>
+<h2 id="五、最佳实践建议"><a href="#五、最佳实践建议" class="headerlink" title="五、最佳实践建议"></a>五、最佳实践建议</h2><table>
+<thead>
+<tr>
+<th align="left">特性</th>
+<th align="left">构造器注入 (Constructor Injection)</th>
+<th align="left">Setter注入 (Setter Injection)</th>
+<th align="left">字段注入 (Field Injection)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>代码简洁性</strong></td>
+<td align="left">中等 (需要构造函数)</td>
+<td align="left">中等 (需要Setter方法)</td>
+<td align="left"><strong>最高</strong> (直接在字段上加注解)</td>
+</tr>
+<tr>
+<td align="left"><strong>可读性&#x2F;明确性</strong></td>
+<td align="left"><strong>最高</strong> (必需依赖一目了然)</td>
+<td align="left">中等 (依赖是否必需需看Setter方法名&#x2F;注释)</td>
+<td align="left">最低 (依赖关系隐藏)</td>
+</tr>
+<tr>
+<td align="left"><strong>不可变性</strong></td>
+<td align="left"><strong>支持</strong> (可声明final字段)</td>
+<td align="left">不支持 (字段通常非final)</td>
+<td align="left">不支持 (字段不能是final)</td>
+</tr>
+<tr>
+<td align="left"><strong>对象状态完整性</strong></td>
+<td align="left"><strong>最高</strong> (创建后即完整)</td>
+<td align="left">较低 (可能部分注入)</td>
+<td align="left">较低 (可能部分注入)</td>
+</tr>
+<tr>
+<td align="left"><strong>可测试性</strong></td>
+<td align="left"><strong>最好</strong> (易于手动传入Mock依赖)</td>
+<td align="left">好 (可通过Setter传入Mock)</td>
+<td align="left">差 (需要反射或Spring容器)</td>
+</tr>
+<tr>
+<td align="left"><strong>封装性</strong></td>
+<td align="left">好 (通过构造函数参数)</td>
+<td align="left">好 (通过Setter方法)</td>
+<td align="left"><strong>差</strong> (直接反射访问私有字段)</td>
+</tr>
+<tr>
+<td align="left"><strong>框架耦合度</strong></td>
+<td align="left">低 (构造函数是标准Java)</td>
+<td align="left">中等 (Setter是标准Java，但注解是Spring)</td>
+<td align="left"><strong>高</strong> (完全依赖注解和反射)</td>
+</tr>
+<tr>
+<td align="left"><strong>循环依赖处理</strong></td>
+<td align="left">启动时失败 (强制设计改进)</td>
+<td align="left">可能解决 (但建议避免循环依赖)</td>
+<td align="left">可能解决 (但建议避免循环依赖)</td>
+</tr>
+<tr>
+<td align="left"><strong>适用场景</strong></td>
+<td align="left"><strong>强推荐用于必需的、不变的依赖</strong></td>
+<td align="left">可选依赖、需要动态重新绑定的依赖</td>
+<td align="left"><strong>不推荐，尽量少用</strong></td>
+</tr>
+</tbody></table>
+<h2 id="六、总结"><a href="#六、总结" class="headerlink" title="六、总结"></a>六、总结</h2><ul>
+<li><strong>构造器注入</strong>：保证对象完整性和不变性，是Spring官方推荐的首选方式</li>
+<li><strong>Setter注入</strong>：适用于可选依赖或需要动态配置的场景</li>
+<li><strong>字段注入</strong>：应避免使用，因其破坏封装性、降低可测试性<br>遵循这些原则可构建更健壮、可测试和可维护的Spring应用。实际项目中，结合Lombok的@RequiredArgsConstructor可让构造器注入更简洁高效。</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java/" rel="tag"># java</a>
+              <a href="/tags/spring/" rel="tag"># spring</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/07/14/spring%E5%AD%A6%E4%B9%A0-spring%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86/" rel="prev" title="spring学习--spring核心原理">
+      <i class="fa fa-chevron-left"></i> spring学习--spring核心原理
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2025/08/11/linux-%E5%AE%89%E5%85%A8%E9%98%B2%E6%8A%A41/" rel="next" title="linux--安全防护1">
+      linux--安全防护1 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring%E6%A0%B8%E5%BF%83%E5%9F%BA%E7%A1%80%E2%80%93%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%EF%BC%88%E6%9E%84%E9%80%A0%E5%99%A8%E6%B3%A8%E5%85%A5%E3%80%81Setter%E6%B3%A8%E5%85%A5%E3%80%81%E5%AD%97%E6%AE%B5%E6%B3%A8%E5%85%A5%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">Spring核心基础–依赖注入（构造器注入、Setter注入、字段注入）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%EF%BC%88Dependency-Injection-DI%EF%BC%89%E6%A6%82%E8%BF%B0"><span class="nav-number">1.1.</span> <span class="nav-text">一、依赖注入（Dependency Injection, DI）概述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%E7%9A%84%E5%A5%BD%E5%A4%84"><span class="nav-number">1.1.1.</span> <span class="nav-text">依赖注入的好处</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E4%B8%89%E7%A7%8D%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%E6%96%B9%E5%BC%8F%E8%AF%A6%E8%A7%A3%E4%B8%8E%E6%AF%94%E8%BE%83"><span class="nav-number">1.2.</span> <span class="nav-text">二、三种依赖注入方式详解与比较</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E6%9E%84%E9%80%A0%E5%99%A8%E6%B3%A8%E5%85%A5%EF%BC%88Constructor-Injection%EF%BC%89"><span class="nav-number">1.2.1.</span> <span class="nav-text">1. 构造器注入（Constructor Injection）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Setter-%E6%B3%A8%E5%85%A5%EF%BC%88Setter-Injection%EF%BC%89"><span class="nav-number">1.2.2.</span> <span class="nav-text">2. Setter 注入（Setter Injection）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%AD%97%E6%AE%B5%E6%B3%A8%E5%85%A5%EF%BC%88Field-Injection%EF%BC%89"><span class="nav-number">1.2.3.</span> <span class="nav-text">3. 字段注入（Field Injection）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%AD%97%E6%AE%B5%E6%B3%A8%E5%85%A5%EF%BC%88Field-Injection%EF%BC%89-1"><span class="nav-number">1.2.4.</span> <span class="nav-text">3.字段注入（Field Injection）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E6%8E%A8%E8%8D%90"><span class="nav-number">1.3.</span> <span class="nav-text">四、最佳实践推荐</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E5%BB%BA%E8%AE%AE"><span class="nav-number">1.4.</span> <span class="nav-text">五、最佳实践建议</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD%E3%80%81%E6%80%BB%E7%BB%93"><span class="nav-number">1.5.</span> <span class="nav-text">六、总结</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Mr.du</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+          <span class="site-state-item-count">75</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">68</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">63</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/feizhufanfan" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;feizhufanfan" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1009963012@qq.com" title="E-Mail → mailto:1009963012@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2015 – 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Mr.du</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

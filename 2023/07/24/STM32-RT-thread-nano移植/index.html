@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"feizhufanfan.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="STM32移植RT-Thread Nano环境准备 STM32CubeMX添加RT-thread组件包   在软件界面的Help中点击Manage embedded software packages 点击From URL 添加RT-thread Nano组件源地址 https:&#x2F;&#x2F;www.st.com&#x2F;en&#x2F;development-tools&#x2F;stm32cubemx.html在弹出的窗口中新建一">
+<meta property="og:type" content="article">
+<meta property="og:title" content="STM32-RT-thread nano移植">
+<meta property="og:url" content="https://feizhufanfan.github.io/2023/07/24/STM32-RT-thread-nano%E7%A7%BB%E6%A4%8D/index.html">
+<meta property="og:site_name" content="鲜奶鱼板面">
+<meta property="og:description" content="STM32移植RT-Thread Nano环境准备 STM32CubeMX添加RT-thread组件包   在软件界面的Help中点击Manage embedded software packages 点击From URL 添加RT-thread Nano组件源地址 https:&#x2F;&#x2F;www.st.com&#x2F;en&#x2F;development-tools&#x2F;stm32cubemx.html在弹出的窗口中新建一">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.feizhufanfan.top:18088/minio/images/blog/20230724170951.png">
+<meta property="og:image" content="https://blog.feizhufanfan.top:18088/minio/images/blog/20230724171140.png">
+<meta property="og:image" content="https://blog.feizhufanfan.top:18088/minio/images/blog/20230724171627.png">
+<meta property="og:image" content="https://blog.feizhufanfan.top:18088/minio/images/blog/20230724172159.png">
+<meta property="og:image" content="https://blog.feizhufanfan.top:18088/minio/images/blog/20230724172905.png">
+<meta property="og:image" content="https://blog.feizhufanfan.top:18088/minio/images/blog/20230724173145.png">
+<meta property="og:image" content="https://blog.feizhufanfan.top:18088/minio/images/blog/20230724173616.png">
+<meta property="og:image" content="https://blog.feizhufanfan.top:18088/minio/images/blog/20230724174020.png">
+<meta property="og:image" content="https://blog.feizhufanfan.top:18088/minio/images/blog/20230724174550.png">
+<meta property="og:image" content="https://blog.feizhufanfan.top:18088/minio/images/blog/20230724174829.png">
+<meta property="og:image" content="https://blog.feizhufanfan.top:18088/minio/images/blog/20230724175512.png">
+<meta property="og:image" content="https://blog.feizhufanfan.top:18088/minio/images/blog/20230724175916.png">
+<meta property="og:image" content="https://blog.feizhufanfan.top:18088/minio/images/blog/20230724180024.png">
+<meta property="og:image" content="https://blog.feizhufanfan.top:18088/minio/images/blog/20230725093909.png">
+<meta property="og:image" content="https://blog.feizhufanfan.top:18088/minio/images/blog/20230725094757.png">
+<meta property="og:image" content="https://blog.feizhufanfan.top:18088/minio/images/blog/20230725095423.png">
+<meta property="article:published_time" content="2023-07-24T08:47:18.000Z">
+<meta property="article:modified_time" content="2025-12-11T16:53:07.478Z">
+<meta property="article:author" content="Mr.du">
+<meta property="article:tag" content="STM32">
+<meta property="article:tag" content="RT-Thread-nano">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.feizhufanfan.top:18088/minio/images/blog/20230724170951.png">
+
+<link rel="canonical" href="https://feizhufanfan.github.io/2023/07/24/STM32-RT-thread-nano%E7%A7%BB%E6%A4%8D/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>STM32-RT-thread nano移植 | 鲜奶鱼板面</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">鲜奶鱼板面</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-主页">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>主页</a>
+
+  </li>
+        <li class="menu-item menu-item-标签">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-技术">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>技术</a>
+
+  </li>
+        <li class="menu-item menu-item-life">
+
+    <a href="/categories/%E9%9A%8F%E7%AC%94/" rel="section"><i class="fa fa-pizza-slice fa-fw"></i>生活</a>
+
+  </li>
+        <li class="menu-item menu-item-归档">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://feizhufanfan.github.io/2023/07/24/STM32-RT-thread-nano%E7%A7%BB%E6%A4%8D/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Mr.du">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鲜奶鱼板面">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          STM32-RT-thread nano移植
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-07-24 16:47:18" itemprop="dateCreated datePublished" datetime="2023-07-24T16:47:18+08:00">2023-07-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-12-12 00:53:07" itemprop="dateModified" datetime="2025-12-12T00:53:07+08:00">2025-12-12</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/STM32/" itemprop="url" rel="index"><span itemprop="name">STM32</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/STM32/RT-Thread-nano%E7%A7%BB%E6%A4%8D/" itemprop="url" rel="index"><span itemprop="name">RT-Thread-nano移植</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="STM32移植RT-Thread-Nano"><a href="#STM32移植RT-Thread-Nano" class="headerlink" title="STM32移植RT-Thread Nano"></a>STM32移植RT-Thread Nano</h1><h2 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h2><ul>
+<li>STM32CubeMX添加RT-thread组件包</li>
+</ul>
+<ol>
+<li>在软件界面的<code>Help</code>中点击<code>Manage embedded software packages</code><br><img src="https://blog.feizhufanfan.top:18088/minio/images/blog/20230724170951.png"></li>
+<li>点击<code>From URL</code><br><img src="https://blog.feizhufanfan.top:18088/minio/images/blog/20230724171140.png"></li>
+<li>添加<code>RT-thread Nano</code>组件源地址<code> https://www.st.com/en/development-tools/stm32cubemx.html</code><br>在弹出的窗口中新建一个，将地址输入进去后点击<code>Check</code>检查地址的有效性。结果如下图<br><img src="https://blog.feizhufanfan.top:18088/minio/images/blog/20230724171627.png"></li>
+<li>安装组件<br>地址添加成功后点击<code>RealRhread</code>，选择<code>RT-thread</code>下拉选项安装对应的组件版本，安装成功后点击刷新等待刷新完成。<br><img src="https://blog.feizhufanfan.top:18088/minio/images/blog/20230724172159.png"><br>关闭软件。</li>
+</ol>
+<h2 id="工程创建"><a href="#工程创建" class="headerlink" title="工程创建"></a>工程创建</h2><ul>
+<li><p>在Clion中新建工程，跳转到STM32CubeMX后选择对应的芯片类型。<br>具体过程参考<a target="_blank" rel="noopener" href="https://feizhufanfan.top/2023/07/17/STM32-%E4%BD%BF%E7%94%A8Clion%E5%BC%80%E5%8F%91/">STM32-使用Clion开发</a></p>
+</li>
+<li><p>在工程中添加RT-thread组件</p>
+</li>
+</ul>
+<ol>
+<li>回到<code>STM32CubeMX</code>，点击<code>SoftWave Packts</code>中的<code>Select Componets</code><br><img src="https://blog.feizhufanfan.top:18088/minio/images/blog/20230724172905.png"></li>
+<li>启用组件,根据自身情况选择对应组件点击<code>OK</code>确定启用。由于我使用的是<code>STM32F103C6T6</code> <code>RAM</code>和<code>Flash</code>都比较小，因此就不启用<code>device</code>框架了<br><img src="https://blog.feizhufanfan.top:18088/minio/images/blog/20230724173145.png"></li>
+<li>导入组件点击<code>midisoftWave and SoftWave Packts</code>,在右侧把启用的组件包勾选上。<br><img src="https://blog.feizhufanfan.top:18088/minio/images/blog/20230724173616.png"></li>
+<li>将系统的硬件中断权限交给RT-thread，在<code>System Core</code>中点击<code>NVCC</code>切换到<code>code Genration</code>页面把<code>Hard fault interrupt</code>去除勾选状态。<br><img src="https://blog.feizhufanfan.top:18088/minio/images/blog/20230724174020.png"></li>
+<li>生成工程<br>在配置完以上信息后，自此配置结束，点击<code>Generation</code>生成工程。工程具体的配置信息参考<a target="_blank" rel="noopener" href="https://feizhufanfan.top/2023/07/17/STM32-%E4%BD%BF%E7%94%A8Clion%E5%BC%80%E5%8F%91/">STM32-使用Clion开发</a>。<br><img src="https://blog.feizhufanfan.top:18088/minio/images/blog/20230724174550.png"></li>
+</ol>
+<h2 id="修改STM32的启动入口"><a href="#修改STM32的启动入口" class="headerlink" title="修改STM32的启动入口"></a>修改STM32的启动入口</h2><p>在CLion的工程界面找到<code>startup_stm32f103c6tx.s</code>文件。<strong>提示：不同开发板的启动文件名称是不一样的，但文件所在位置一致。</strong><br><img src="https://blog.feizhufanfan.top:18088/minio/images/blog/20230724174829.png"><br>打开<code>startup_stm32f103c6tx.s</code>文件并找到以下代码段</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">/* Call the application&#x27;s entry point.*/</span><br><span class="line">  bl main</span><br><span class="line">  bx lr</span><br><span class="line">.size Reset_Handler, .-Reset_Handler</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>修改为</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">/* Call the application&#x27;s entry point.*/</span><br><span class="line">  bl entry</span><br><span class="line">  bx lr</span><br><span class="line">.size Reset_Handler, .-Reset_Handler</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="取消多余的时钟初始化代码"><a href="#取消多余的时钟初始化代码" class="headerlink" title="取消多余的时钟初始化代码"></a>取消多余的时钟初始化代码</h2><p>打开<code>main.c</code>文件，可以看到文件中已经有了一个示例代码<br><img src="https://blog.feizhufanfan.top:18088/minio/images/blog/20230724175512.png"><br>把图中标出的<code>HAL_Init()</code>、<code>SystemClock_Config()</code>函数删除或者注释</p>
+<h2 id="可能出现的问题"><a href="#可能出现的问题" class="headerlink" title="可能出现的问题"></a>可能出现的问题</h2><ul>
+<li><p>出现<code> error: #error Please uncomment the line &lt;#include &quot;finsh_config.h&quot;&gt; in the rtconfig.h</code>错误<br><img src="https://blog.feizhufanfan.top:18088/minio/images/blog/20230724175916.png"><br>解决办法：<br>在<code>rtconfig.h</code>文件中将<code>#include &quot;finsh_config.h&quot;</code> 注释放开<br><img src="https://blog.feizhufanfan.top:18088/minio/images/blog/20230724180024.png"></p>
+</li>
+<li><p>出现<code>error: unknown type name ’UART_HandleTypeDef‘</code>错误<br>出现改错误是在创建工程项目时，没有启用串口组件导致的。在RT-Thread中默认使用<code>Usart1</code>作为<code>shell</code>控制台的输出。<br>解决办法：<br>启用Usart组件。<br><img src="https://blog.feizhufanfan.top:18088/minio/images/blog/20230725093909.png"><br>补充说明：<br>由于在启用Usart组件，RT-Thread中会被重复定义，因此需要对代码做出部分修改。<br>首先在<code>borad.c</code>文件中将<code>Usart2</code>改为<code>Usart1</code>。<br><img src="https://blog.feizhufanfan.top:18088/minio/images/blog/20230725094757.png"><br>在<code>void rt_hw_board_init(void)</code>函数实现的上面声明一个<code>static int uart_init(void);</code>,然后在<code>rt_hw_board_init</code>函数内部的<code>HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq()/RT_TICK_PER_SECOND);</code>位置新增<code>uart_init</code>的调用。<br><img src="https://blog.feizhufanfan.top:18088/minio/images/blog/20230725095423.png"><br>在<code>main.c</code>文件中找到<code>main</code>函数取消其中<code>MX_USART1_UART_Init</code>函数的调用。</p>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/STM32/" rel="tag"># STM32</a>
+              <a href="/tags/RT-Thread-nano/" rel="tag"># RT-Thread-nano</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/07/24/STM32-TIM%E7%9A%84%E4%BD%BF%E7%94%A8/" rel="prev" title="STM32-TIM的使用">
+      <i class="fa fa-chevron-left"></i> STM32-TIM的使用
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/08/15/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" rel="next" title="内存泄漏">
+      内存泄漏 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#STM32%E7%A7%BB%E6%A4%8DRT-Thread-Nano"><span class="nav-number">1.</span> <span class="nav-text">STM32移植RT-Thread Nano</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="nav-number">1.1.</span> <span class="nav-text">环境准备</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%A5%E7%A8%8B%E5%88%9B%E5%BB%BA"><span class="nav-number">1.2.</span> <span class="nav-text">工程创建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9STM32%E7%9A%84%E5%90%AF%E5%8A%A8%E5%85%A5%E5%8F%A3"><span class="nav-number">1.3.</span> <span class="nav-text">修改STM32的启动入口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%96%E6%B6%88%E5%A4%9A%E4%BD%99%E7%9A%84%E6%97%B6%E9%92%9F%E5%88%9D%E5%A7%8B%E5%8C%96%E4%BB%A3%E7%A0%81"><span class="nav-number">1.4.</span> <span class="nav-text">取消多余的时钟初始化代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%AF%E8%83%BD%E5%87%BA%E7%8E%B0%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">1.5.</span> <span class="nav-text">可能出现的问题</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Mr.du</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+          <span class="site-state-item-count">75</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">68</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">63</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/feizhufanfan" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;feizhufanfan" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1009963012@qq.com" title="E-Mail → mailto:1009963012@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2015 – 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Mr.du</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

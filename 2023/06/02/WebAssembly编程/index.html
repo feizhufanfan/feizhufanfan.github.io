@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"feizhufanfan.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="C&#x2F;C++面向WebAssembly编程  第一章 Emscripten入门 安装Emscripten准备python环境conda create -n py2 python&#x3D;2.7激活环境conda activate py2下载emsdkgit clone https:&#x2F;&#x2F;github.com&#x2F;juj&#x2F;emsdk.git安装并激活EmscriptenLinux 123.&#x2F;emsdk instal">
+<meta property="og:type" content="article">
+<meta property="og:title" content="WebAssembly编程">
+<meta property="og:url" content="https://feizhufanfan.github.io/2023/06/02/WebAssembly%E7%BC%96%E7%A8%8B/index.html">
+<meta property="og:site_name" content="鲜奶鱼板面">
+<meta property="og:description" content="C&#x2F;C++面向WebAssembly编程  第一章 Emscripten入门 安装Emscripten准备python环境conda create -n py2 python&#x3D;2.7激活环境conda activate py2下载emsdkgit clone https:&#x2F;&#x2F;github.com&#x2F;juj&#x2F;emsdk.git安装并激活EmscriptenLinux 123.&#x2F;emsdk instal">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-06-02T05:48:23.000Z">
+<meta property="article:modified_time" content="2025-12-11T16:53:07.479Z">
+<meta property="article:author" content="Mr.du">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="WebAssembly">
+<meta property="article:tag" content="js">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://feizhufanfan.github.io/2023/06/02/WebAssembly%E7%BC%96%E7%A8%8B/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>WebAssembly编程 | 鲜奶鱼板面</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">鲜奶鱼板面</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-主页">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>主页</a>
+
+  </li>
+        <li class="menu-item menu-item-标签">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-技术">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>技术</a>
+
+  </li>
+        <li class="menu-item menu-item-life">
+
+    <a href="/categories/%E9%9A%8F%E7%AC%94/" rel="section"><i class="fa fa-pizza-slice fa-fw"></i>生活</a>
+
+  </li>
+        <li class="menu-item menu-item-归档">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://feizhufanfan.github.io/2023/06/02/WebAssembly%E7%BC%96%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Mr.du">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鲜奶鱼板面">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          WebAssembly编程
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-06-02 13:48:23" itemprop="dateCreated datePublished" datetime="2023-06-02T13:48:23+08:00">2023-06-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-12-12 00:53:07" itemprop="dateModified" datetime="2025-12-12T00:53:07+08:00">2025-12-12</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/WebAssembly/" itemprop="url" rel="index"><span itemprop="name">WebAssembly</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 align="Center" href="https://cntofu.com/book/150/readme.html">C/C++面向WebAssembly编程</h1>
+
+<h1 id="第一章-Emscripten入门"><a href="#第一章-Emscripten入门" class="headerlink" title="第一章 Emscripten入门"></a>第一章 Emscripten入门</h1><ol>
+<li><p>安装Emscripten<br>准备python环境<br><code>conda create -n py2 python=2.7</code><br>激活环境<code>conda activate py2</code><br>下载emsdk<br><code>git clone https://github.com/juj/emsdk.git</code><br>安装并激活<code>Emscripten</code><br>Linux</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">./emsdk install latest</span><br><span class="line">./emsdk activate latest</span><br><span class="line"><span class="built_in">source</span> ./emsdk_env.sh</span><br></pre></td></tr></table></figure>
+<p>Windows  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line">emsdk.bat install latest</span><br><span class="line"></span><br><span class="line"><span class="comment"># (py2) E:\emsdk&gt;emsdk.bat install  latest</span></span><br><span class="line"><span class="comment"># Resolving SDK alias &#x27;latest&#x27; to &#x27;3.1.40&#x27;</span></span><br><span class="line"><span class="comment"># Resolving SDK version &#x27;3.1.40&#x27; to &#x27;sdk-releases-c3122846bb040798aab975f61008c37eb19476de-64bit&#x27;</span></span><br><span class="line"><span class="comment"># Installing SDK &#x27;sdk-releases-c3122846bb040798aab975f61008c37eb19476de-64bit&#x27;..</span></span><br><span class="line"><span class="comment"># Installing tool &#x27;node-15.14.0-64bit&#x27;..</span></span><br><span class="line"><span class="comment"># Downloading: E:/emsdk/zips/node-v15.14.0-win-x64.zip from https://storage.googleapis.com/webassembly/emscripten-releases-builds/deps/node-v15.14.0-win-x64.zip, 28255378 Bytes</span></span><br><span class="line"><span class="comment"># Unpacking &#x27;E:/emsdk/zips/node-v15.14.0-win-x64.zip&#x27; to &#x27;E:/emsdk/node/15.14.0_64bit&#x27;</span></span><br><span class="line"><span class="comment"># Done installing tool &#x27;node-15.14.0-64bit&#x27;.</span></span><br><span class="line"><span class="comment"># Installing tool &#x27;python-3.9.2-nuget-64bit&#x27;..</span></span><br><span class="line"><span class="comment"># Downloading: E:/emsdk/zips/python-3.9.2-4-amd64+pywin32.zip from https://storage.googleapis.com/webassembly/emscripten-releases-builds/deps/python-3.9.2-4-amd64+pywin32.zip, 14413267 Bytes</span></span><br><span class="line"><span class="comment"># Unpacking &#x27;E:/emsdk/zips/python-3.9.2-4-amd64+pywin32.zip&#x27; to &#x27;E:/emsdk/python/3.9.2-nuget_64bit&#x27;</span></span><br><span class="line"><span class="comment"># Done installing tool &#x27;python-3.9.2-nuget-64bit&#x27;.</span></span><br><span class="line"><span class="comment"># Installing tool &#x27;java-8.152-64bit&#x27;..</span></span><br><span class="line"><span class="comment"># Downloading: E:/emsdk/zips/portable_jre_8_update_152_64bit.zip from https://storage.googleapis.com/webassembly/emscripten-releases-builds/deps/portable_jre_8_update_152_64bit.zip, 69241499 Bytes</span></span><br><span class="line"><span class="comment"># Unpacking &#x27;E:/emsdk/zips/portable_jre_8_update_152_64bit.zip&#x27; to &#x27;E:/emsdk/java/8.152_64bit&#x27;</span></span><br><span class="line"><span class="comment"># Done installing tool &#x27;java-8.152-64bit&#x27;.</span></span><br><span class="line"><span class="comment"># Installing tool &#x27;releases-c3122846bb040798aab975f61008c37eb19476de-64bit&#x27;..</span></span><br><span class="line"><span class="comment"># Downloading: E:/emsdk/zips/c3122846bb040798aab975f61008c37eb19476de-wasm-binaries.zip from https://storage.googleapis.com/webassembly/emscripten-releases-builds/win/c3122846bb040798aab975f61008c37eb19476de/wasm-binaries.zip, 425017845 Bytes</span></span><br><span class="line"><span class="comment"># Unpacking &#x27;E:/emsdk/zips/c3122846bb040798aab975f61008c37eb19476de-wasm-binaries.zip&#x27; to &#x27;E:/emsdk/upstream&#x27;</span></span><br><span class="line"><span class="comment"># Done installing tool &#x27;releases-c3122846bb040798aab975f61008c37eb19476de-64bit&#x27;.</span></span><br><span class="line"><span class="comment"># Done installing SDK &#x27;sdk-releases-c3122846bb040798aab975f61008c37eb19476de-64bit&#x27;.</span></span><br><span class="line"></span><br><span class="line">emsdk.bat activate latest</span><br><span class="line"></span><br><span class="line"><span class="comment"># (py2) E:\emsdk&gt;emsdk.bat activate latest</span></span><br><span class="line"><span class="comment"># Resolving SDK alias &#x27;latest&#x27; to &#x27;3.1.40&#x27;</span></span><br><span class="line"><span class="comment"># Resolving SDK version &#x27;3.1.40&#x27; to &#x27;sdk-releases-c3122846bb040798aab975f61008c37eb19476de-64bit&#x27;</span></span><br><span class="line"><span class="comment"># Setting the following tools as active:</span></span><br><span class="line"><span class="comment">#    node-15.14.0-64bit</span></span><br><span class="line"><span class="comment">#    python-3.9.2-nuget-64bit</span></span><br><span class="line"><span class="comment">#    java-8.152-64bit</span></span><br><span class="line"><span class="comment">#    releases-c3122846bb040798aab975f61008c37eb19476de-64bit</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Adding directories to PATH:</span></span><br><span class="line"><span class="comment"># PATH += E:\emsdk</span></span><br><span class="line"><span class="comment"># PATH += E:\emsdk\upstream\emscripten</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Setting environment variables:</span></span><br><span class="line"><span class="comment"># PATH = E:\emsdk;E:\emsdk\upstream\emscripten;D:\Program Files\miniconda\envs\py2;D:\Program Files\miniconda\envs\py2\Library\mingw-w64\bin;D:\Program Files\miniconda\envs\py2\Library\usr\bin;D:\Program Files\miniconda\envs\py2\Library\bin;D:\Program Files\miniconda\envs\py2\Scripts;D:\Program Files\miniconda\envs\py2\bin;D:\Program Files\miniconda\condabin;D:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.2\bin;D:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.2\libnvvp;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0;C:\Windows\System32\OpenSSH;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;D:\Program Files\Bandizip;D:\Program Files\Git\cmd;D:\Program Files\TortoiseSVN\bin;C:\Program Files\dotnet;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\Program Files\NVIDIA Corporation\Nsight Compute 2022.3.0;D:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8\bin;D:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8\libnvvp;D:\Program Files\CMake\bin;E:\nvm;E:\nodejs;D:\Program Files\miniconda;D:\Program Files\miniconda\Library\mingw-w64\bin;D:\Program Files\miniconda\Library\usr\bin;D:\Program Files\miniconda\Library\bin;D:\Program Files\miniconda\Scripts;C:\Users\nblh\AppData\Local\Microsoft\WindowsApps;D:\Program Files\Microsoft VS Code\bin;C:\Users\nblh\.dotnet\tools;C:\Program Files (x86)\Nmap;E:\flutter\bin</span></span><br><span class="line"><span class="comment"># EMSDK = E:/emsdk</span></span><br><span class="line"><span class="comment"># EMSDK_NODE = E:\emsdk\node\15.14.0_64bit\bin\node.exe</span></span><br><span class="line"><span class="comment"># EMSDK_PYTHON = E:\emsdk\python\3.9.2-nuget_64bit\python.exe</span></span><br><span class="line"><span class="comment"># JAVA_HOME = E:\emsdk\java\8.152_64bit</span></span><br><span class="line"><span class="comment"># Clearing existing environment variable: EMSDK_PY</span></span><br><span class="line"><span class="comment"># The changes made to environment variables only apply to the currently running shell instance. Use the &#x27;emsdk_env.bat&#x27; to re-enter this environment later, or if you&#x27;d like to register this environment permanently, rerun this command with the option --permanent.</span></span><br><span class="line"></span><br><span class="line">emsdk_env.bat</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">```  </span><br><span class="line"></span><br><span class="line">2. 检验安装</span><br><span class="line">```sh</span><br><span class="line">emcc -v</span><br><span class="line"></span><br><span class="line"><span class="comment"># (py2) E:\emsdk&gt;emcc -v</span></span><br><span class="line"><span class="comment"># emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 3.1.40 (5c27e79dd0a9c4e27ef2326841698cdd4f6b5784)</span></span><br><span class="line"><span class="comment"># clang version 17.0.0 (https://github.com/llvm/llvm-project 2922e7cd9334797c24a317d41275f1258ef9ddd3)</span></span><br><span class="line"><span class="comment"># Target: wasm32-unknown-emscripten</span></span><br><span class="line"><span class="comment"># Thread model: posix</span></span><br><span class="line"><span class="comment"># InstalledDir: E:\emsdk\upstream\bin</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>生产简单示例<code>hello word</code><br>新建一个<code>main.cpp</code></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//main.cpp</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;hello word！\n&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>编译</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">emcc main.cpp -s WASM=1 -o main.html</span><br></pre></td></tr></table></figure>
+<p>下面列出了我们命令中选项的细节：</p>
+</li>
+</ol>
+<ul>
+<li>-s WASM&#x3D;1 — 指定我们想要的 wasm 输出形式。如果我们不指定这个选项，Emscripten 默认将只会生成asm.js。</li>
+<li>-o main.html — 指定这个选项将会生成 HTML 页面来运行我们的代码，并且会生成 wasm 模块，以及编译和实例化 wasm 模块所需要的“胶水”js 代码，这样我们就可以直接在 web 环境中使用了。</li>
+</ul>
+<p>这个时候在您的源码文件夹应该有下列文件：</p>
+<ul>
+<li>main.wasm 二进制的 wasm 模块代码</li>
+<li>main.js 一个包含了用来在原生 C 函数和 JavaScript&#x2F;wasm 之间转换的胶水代码的 JavaScript 文件</li>
+<li>main.html 一个用来加载，编译，实例化你的 wasm 代码并且将它输出在浏览器显示上的一个 HTML 文件</li>
+</ul>
+<h1 id="构建从C-x2F-C-导出函数到wasm库的方法"><a href="#构建从C-x2F-C-导出函数到wasm库的方法" class="headerlink" title="构建从C&#x2F;C++导出函数到wasm库的方法"></a>构建从C&#x2F;C++导出函数到wasm库的方法</h1><h2 id="方法一"><a href="#方法一" class="headerlink" title="方法一"></a>方法一</h2><ol>
+<li><p>首先编写C&#x2F;C++语言的功能处理代码</p>
+ <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">ErrorCode <span class="title">initDecoder</span><span class="params">(<span class="type">int</span> fileSize, <span class="type">int</span> logLv)</span> </span>&#123;</span><br><span class="line">    ErrorCode ret = kErrorCode_Success;</span><br><span class="line">    <span class="keyword">do</span> &#123;</span><br><span class="line">        <span class="comment">//Log level.</span></span><br><span class="line">        logLevel = logLv;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (decoder != <span class="literal">NULL</span>) &#123;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        decoder = (WebDecoder *)<span class="built_in">av_mallocz</span>(<span class="built_in">sizeof</span>(WebDecoder));</span><br><span class="line">        <span class="keyword">if</span> (fileSize &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">            decoder-&gt;fileSize = fileSize;</span><br><span class="line">            <span class="built_in">sprintf</span>(decoder-&gt;fileName, <span class="string">&quot;tmp-%lu.mp4&quot;</span>, <span class="built_in">getTickCount</span>());</span><br><span class="line">            decoder-&gt;fp = <span class="built_in">fopen</span>(decoder-&gt;fileName, <span class="string">&quot;wb+&quot;</span>);</span><br><span class="line">            <span class="keyword">if</span> (decoder-&gt;fp == <span class="literal">NULL</span>) &#123;</span><br><span class="line">                <span class="built_in">simpleLog</span>(<span class="string">&quot;Open file %s failed, err: %d.&quot;</span>, decoder-&gt;fileName, errno);</span><br><span class="line">                ret = kErrorCode_Open_File_Error;</span><br><span class="line">                <span class="built_in">av_free</span>(decoder);</span><br><span class="line">                decoder = <span class="literal">NULL</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            decoder-&gt;isStream = <span class="number">1</span>;</span><br><span class="line">            decoder-&gt;fifoSize = kDefaultFifoSize;</span><br><span class="line">            decoder-&gt;fifo = <span class="built_in">av_fifo_alloc</span>(decoder-&gt;fifoSize);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">while</span> (<span class="number">0</span>);</span><br><span class="line">    <span class="built_in">simpleLog</span>(<span class="string">&quot;Decoder initialized %d.&quot;</span>, ret);</span><br><span class="line">    <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>编写构建*.Wasm和*.js的导出脚本文件</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> TOTAL_MEMORY=67108864 <span class="comment">#定义导出的Wasm库文件在运行时消耗的内存大小</span></span><br><span class="line"><span class="built_in">export</span> EXPORTED_FUNCTIONS =<span class="string">&quot;[ \     #定义导出函数列表，将C/C++文件里的函数方法导出到JS</span></span><br><span class="line"><span class="string">    &#x27;_initDecoder&#x27;, &#x27;_malloc&#x27; ]&quot;</span></span><br><span class="line">emcc *.c/C++ -I <span class="variable">$&#123;INCLUDE_FILES&#125;</span> \</span><br><span class="line">    -L <span class="variable">$&#123;LIBS_LIBRARIES&#125;</span> \</span><br><span class="line">    -s WASM=1 <span class="comment">#表示输出wasm的文件，默认输出asm.js</span></span><br><span class="line">    <span class="comment"># -s  SIDE_MODULE=1 #只输出一个文件。 只有Wasm文件生成</span></span><br><span class="line">    -03 \</span><br><span class="line">    -s TOTAL_MEMORY=<span class="variable">$&#123;TOTAL_MEMORY&#125;</span> \ <span class="comment"># 运行时消耗内存的大小</span></span><br><span class="line">    -s EXPORTED_FUNCTIONS=<span class="string">&quot;<span class="variable">$&#123;EXPORTED_FUNCTIONS&#125;</span>&quot;</span> \ <span class="comment"># 定义导出函数的列表</span></span><br><span class="line">    -s EXTRA_EXPORTED_RUNTIME_METHODS=<span class="string">&quot;[&#x27;addFunction&#x27;]&quot;</span> \ <span class="comment">#定义导出函数在运行时的加载方式，‘addfunction’ </span></span><br><span class="line">    -s RESERVED_FUNCTION_POINTERS=14 \ <span class="comment">#用于指定存储导出函数表中函数指针的大小</span></span><br><span class="line">    -o libDecodec.js <span class="comment">#用于指定导出函数库的名称</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在JavaScript中调用Wasm</p>
+ <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">self.<span class="title function_">importScripts</span>(<span class="string">&quot;libDecodec.js&quot;</span>);</span><br><span class="line"><span class="title class_">Decoder</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">initDecoder</span>=<span class="keyword">function</span> (<span class="params">fileSize, chunkSize</span>)&#123;</span><br><span class="line">    <span class="keyword">var</span> ret = <span class="title class_">Module</span>.<span class="title function_">_initDecoder</span>(fileSize, <span class="variable language_">this</span>.<span class="property">coreLogLevel</span>);</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">logger</span>.<span class="title function_">logInfo</span>(<span class="string">&quot;initDecoder return &quot;</span> + ret + <span class="string">&quot;.&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span> (<span class="number">0</span> == ret) &#123;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">cacheBuffer</span> = <span class="title class_">Module</span>.<span class="title function_">_malloc</span>(chunkSize);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">var</span> objData = &#123;</span><br><span class="line">        <span class="attr">t</span>: kInitDecoderRsp,</span><br><span class="line">        <span class="attr">e</span>: ret</span><br><span class="line">    &#125;;</span><br><span class="line">    self.<span class="title function_">postMessage</span>(objData);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="方法二"><a href="#方法二" class="headerlink" title="方法二"></a>方法二</h2><ol>
+<li>定义导出函数符号<figure class="highlight c++"><figcaption><span>DLL.cpp</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">ifndef</span> EM_EXPORT</span></span><br><span class="line"><span class="meta">#	<span class="keyword">if</span> defined(__EMSCRIPTEN__)</span></span><br><span class="line"><span class="meta">#		<span class="keyword">include</span> <span class="string">&lt;emscripten.h&gt;</span></span></span><br><span class="line"><span class="meta">#		<span class="keyword">if</span> defined(__cplusplus)</span></span><br><span class="line"><span class="meta">#			<span class="keyword">define</span> EM_EXPORT(rettype) extern <span class="string">&quot;C&quot;</span> rettype EMSCRIPTEN_KEEPALIVE</span></span><br><span class="line"><span class="meta">#		<span class="keyword">else</span></span></span><br><span class="line"><span class="meta">#			<span class="keyword">define</span> EM_EXPORT(rettype) rettype EMSCRIPTEN_KEEPALIVE</span></span><br><span class="line"><span class="meta">#		<span class="keyword">endif</span></span></span><br><span class="line"><span class="meta">#	<span class="keyword">else</span></span></span><br><span class="line"><span class="meta">#		<span class="keyword">if</span> defined(__cplusplus)</span></span><br><span class="line"><span class="meta">#			<span class="keyword">define</span> EM_EXPORT(rettype) extern <span class="string">&quot;C&quot;</span> rettype</span></span><br><span class="line"><span class="meta">#		<span class="keyword">else</span></span></span><br><span class="line"><span class="meta">#			<span class="keyword">define</span> EM_EXPORT(rettype) rettype</span></span><br><span class="line"><span class="meta">#		<span class="keyword">endif</span></span></span><br><span class="line"><span class="meta">#	<span class="keyword">endif</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="built_in">EM_PORT_API</span>(<span class="type">int</span>) <span class="built_in">GetValue</span>() &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">123</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">EM_PORT_API</span>(<span class="type">float</span>) <span class="built_in">add</span>(<span class="type">float</span> a, <span class="type">float</span> b) &#123;</span><br><span class="line">	<span class="keyword">return</span> a + b;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+使用emcc编译导出<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">emcc DLL.cpp -o DLL.js</span><br><span class="line">```  </span><br><span class="line"></span><br><span class="line">在CMAKE中使用编译命令</span><br><span class="line"></span><br><span class="line">```sh</span><br><span class="line"></span><br><span class="line"><span class="built_in">set</span>(EXPORTED_FUNCTIONS <span class="string">&quot;_doWork,_main,_myFunction&quot;</span>)</span><br><span class="line">add_custom_target(</span><br><span class="line">        <span class="variable">$&#123;PROJECT_NAME&#125;</span>.js</span><br><span class="line">        COMMAND <span class="variable">$&#123;EMSDK_HOME&#125;</span>/emsdk activate latest</span><br><span class="line">        COMMAND  <span class="variable">$&#123;EMSDK_HOME&#125;</span>/emsdk_env.bat</span><br><span class="line">        COMMAND  <span class="variable">$&#123;EMSDK_HOME&#125;</span>/upstream/emscripten/emcc.bat   <span class="variable">$&#123;CMAKE_SOURCE_DIR&#125;</span>/wasmlibdemo/main.cpp</span><br><span class="line">      <span class="comment">#  -std=c++11</span></span><br><span class="line">       <span class="comment"># -s USE_PTHREADS=1</span></span><br><span class="line">        -s WASM=1</span><br><span class="line">        -s EXPORTED_FUNCTIONS=<span class="string">&quot;<span class="variable">$&#123;EXPORTED_FUNCTIONS&#125;</span>&quot;</span></span><br><span class="line">        -s EXPORTED_RUNTIME_METHODS=<span class="string">&quot;[&#x27;ccall&#x27;]&quot;</span></span><br><span class="line">     <span class="comment">#  -s RESERVED_FUNCTION_POINTERS=14</span></span><br><span class="line">     <span class="comment">#   -s TOTAL_MEMORY=131072000</span></span><br><span class="line">      <span class="comment">#  -s USE_SDL=2</span></span><br><span class="line">        -o demoWasm.js</span><br><span class="line">)</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="说明"><a href="#说明" class="headerlink" title="说明:"></a>说明:</h2><p>导出函数使用<code>EXPORTED_FUNCTIONS</code>与<code>EMSCRIPTEN_KEEPALIVE</code>的差异：  </p>
+<ol>
+<li>EMSCRIPTEN_KEEPALIVE 导出符号：这是一种标记函数的宏，用于告诉编译器将该函数保留为导出函数。通过在函数声明前添加 EMSCRIPTEN_KEEPALIVE 宏，可以确保该函数被包含在编译后的 WebAssembly 模块中，并能够从 JavaScript 中访问到。<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">#include &lt;emscripten.h&gt;</span></span><br><span class="line"></span><br><span class="line">EMSCRIPTEN_KEEPALIVE</span><br><span class="line">int myFunction(int param) &#123;</span><br><span class="line">    // 函数的实现</span><br><span class="line">    <span class="built_in">return</span> param + 1;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">```  </span><br><span class="line">使用 EMSCRIPTEN_KEEPALIVE 标记的函数将被自动导出，不需要额外的配置或命令行选项。这种方法适用于简单的导出函数场景。  </span><br><span class="line"></span><br><span class="line">2. EXPORTED_FUNCTIONS 定义导出函数：这是一种通过配置 Emscripten 构建系统来明确指定要导出的函数的方法。通过在构建命令中添加 EXPORTED_FUNCTIONS 选项或编写一个 .txt 文件来指定要导出的函数列表。  </span><br><span class="line">```sh</span><br><span class="line">emcc mycode.cpp -o mymodule.js -s EXPORTED_FUNCTIONS=<span class="string">&quot;[&#x27;_myFunction&#x27;]&quot;</span></span><br><span class="line">```  </span><br><span class="line">这种方法允许您精确控制导出的函数，并且可以一次性导出多个函数。您可以在构建时使用 EXPORTED_FUNCTIONS 选项定义导出函数，也可以将其写入一个文本文件，然后使用 -s EXPORTED_FUNCTIONS_FILE 选项指定该文件。</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">创建页面测试  </span><br><span class="line">```html</span><br><span class="line">&lt;!doctype html&gt;</span><br><span class="line"></span><br><span class="line">&lt;html&gt;</span><br><span class="line">  &lt;<span class="built_in">head</span>&gt;</span><br><span class="line">    &lt;meta charset=<span class="string">&quot;utf-8&quot;</span>&gt;</span><br><span class="line">    &lt;title&gt;Emscripten:DLL&lt;/title&gt;</span><br><span class="line">  &lt;/head&gt;</span><br><span class="line">  &lt;body&gt;</span><br><span class="line">    &lt;script&gt;</span><br><span class="line">    Module = &#123;&#125;;</span><br><span class="line">    Module.onRuntimeInitialized = <span class="function"><span class="title">function</span></span>() &#123;</span><br><span class="line">      console.log(Module._GetValue());</span><br><span class="line">      console.log(Module._add(12, 1.0));</span><br><span class="line">    &#125;</span><br><span class="line">    &lt;/script&gt;</span><br><span class="line">    &lt;script src=<span class="string">&quot;DLL.js&quot;</span>&gt;&lt;/script&gt;</span><br><span class="line">  &lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="注意"><a href="#注意" class="headerlink" title="注意:"></a>注意:</h2><p>在 WebAssembly（Wasm）中处理 C++ 中的线程涉及一些特定的技术和策略。由于 Wasm 的单线程限制，Wasm 本身并不直接支持多线程。但是，可以使用一些技术来模拟线程行为或利用 Web Workers 来实现并发性。<br>下面是两种常见的处理方法：</p>
+<ol>
+<li>方法一<br>基于单线程的模拟：</li>
+</ol>
+<ul>
+<li>使用异步编程模型：基于单线程的异步编程模型可以替代多线程。通过将耗时的操作分解成小任务，并使用事件轮询或回调函数进行调度，可以实现并发性和异步性。</li>
+<li>使用协程：协程是一种轻量级的线程替代方案，它允许在同一个线程中创建多个独立的执行上下文。通过协程库，例如 Boost.Coroutine 或 Coroutine TS，可以实现协程以模拟线程行为。</li>
+<li>使用定时器和分片：如果任务可以细分为小的计算单元，可以使用定时器和分片技术来模拟线程行为。在每个时间片中执行一小部分任务，然后切换到下一个任务。</li>
+</ul>
+<ol start="2">
+<li>方法二<br>使用 Web Workers:</li>
+</ol>
+<ul>
+<li>Web Workers 是浏览器提供的一种机制，可以在后台运行脚本，并发地处理任务。您可以将 C++ 代码转换为 JavaScript，并将其作为 Web Worker 使用。通过将工作分配给不同的 Web Workers，您可以实现基于多个线程的并发性。</li>
+<li>可以使用 Emscripten 的 Pthreads 支持将 C++ 线程代码转换为 WebAssembly，并将其封装在 Web Worker 中。</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/C/" rel="tag"># C++</a>
+              <a href="/tags/WebAssembly/" rel="tag"># WebAssembly</a>
+              <a href="/tags/js/" rel="tag"># js</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/06/01/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/" rel="prev" title="设计模式--单例模式">
+      <i class="fa fa-chevron-left"></i> 设计模式--单例模式
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/06/05/CMAKE%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91%E5%B7%A5%E5%85%B7%E9%93%BE%E7%9A%84%E4%BD%BF%E7%94%A8/" rel="next" title="CMAKE交叉编译工具链的使用">
+      CMAKE交叉编译工具链的使用 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">C&#x2F;C++面向WebAssembly编程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E7%AB%A0-Emscripten%E5%85%A5%E9%97%A8"><span class="nav-number">2.</span> <span class="nav-text">第一章 Emscripten入门</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9E%84%E5%BB%BA%E4%BB%8EC-x2F-C-%E5%AF%BC%E5%87%BA%E5%87%BD%E6%95%B0%E5%88%B0wasm%E5%BA%93%E7%9A%84%E6%96%B9%E6%B3%95"><span class="nav-number">3.</span> <span class="nav-text">构建从C&#x2F;C++导出函数到wasm库的方法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E4%B8%80"><span class="nav-number">3.1.</span> <span class="nav-text">方法一</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E4%BA%8C"><span class="nav-number">3.2.</span> <span class="nav-text">方法二</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%B4%E6%98%8E"><span class="nav-number">3.3.</span> <span class="nav-text">说明:</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B3%A8%E6%84%8F"><span class="nav-number">3.4.</span> <span class="nav-text">注意:</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Mr.du</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+          <span class="site-state-item-count">75</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">68</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">63</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/feizhufanfan" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;feizhufanfan" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1009963012@qq.com" title="E-Mail → mailto:1009963012@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2015 – 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Mr.du</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

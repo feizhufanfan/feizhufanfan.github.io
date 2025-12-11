@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"feizhufanfan.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="背景jetson Nano镜像安装完成之后，准备实现自己的番茄计划。在项目实现过程当中遇到一些需要关注的点，于是便将他们单独罗列出来记录一下。 UART的配置由于Jetson Nano的串口引脚布局和树莓派的布局几乎一致（我想应该时树莓派在极客圈很火相关的资源也比较多。为了很好的融合这个圈子保持引脚标号上将树莓派作为参照，既能够使用树莓派相关的资源也方便极客们更快的上手Nano),查询很多资源后得">
+<meta property="og:type" content="article">
+<meta property="og:title" content="jetson Nano串口配置">
+<meta property="og:url" content="https://feizhufanfan.github.io/2022/02/19/jetson-Nano%E4%B8%B2%E5%8F%A3%E9%85%8D%E7%BD%AE/index.html">
+<meta property="og:site_name" content="鲜奶鱼板面">
+<meta property="og:description" content="背景jetson Nano镜像安装完成之后，准备实现自己的番茄计划。在项目实现过程当中遇到一些需要关注的点，于是便将他们单独罗列出来记录一下。 UART的配置由于Jetson Nano的串口引脚布局和树莓派的布局几乎一致（我想应该时树莓派在极客圈很火相关的资源也比较多。为了很好的融合这个圈子保持引脚标号上将树莓派作为参照，既能够使用树莓派相关的资源也方便极客们更快的上手Nano),查询很多资源后得">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.feizhufanfan.top:18088/minio/images/blog/20220219184923.png">
+<meta property="og:image" content="https://blog.feizhufanfan.top:18088/minio/images/blog/20220219190211.png">
+<meta property="og:image" content="https://blog.feizhufanfan.top:18088/minio/images/blog/20220219190317.png">
+<meta property="og:image" content="https://blog.feizhufanfan.top:18088/minio/images/blog/20220226210741.png">
+<meta property="og:image" content="https://blog.feizhufanfan.top:18088/minio/images/blog/20220219192132.png">
+<meta property="og:image" content="https://blog.feizhufanfan.top:18088/minio/images/blog/20220219192332.png">
+<meta property="og:image" content="https://blog.feizhufanfan.top:18088/minio/images/blog/20220219225640.png">
+<meta property="og:image" content="https://blog.feizhufanfan.top:18088/minio/images/blog/20220219230105.png">
+<meta property="og:image" content="https://blog.feizhufanfan.top:18088/minio/images/blog/20220219231021.png">
+<meta property="og:image" content="https://blog.feizhufanfan.top:18088/minio/images/blog/20220219232003.png">
+<meta property="article:published_time" content="2022-02-19T09:39:48.000Z">
+<meta property="article:modified_time" content="2025-12-11T16:53:07.479Z">
+<meta property="article:author" content="Mr.du">
+<meta property="article:tag" content="番茄计划">
+<meta property="article:tag" content="UART">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.feizhufanfan.top:18088/minio/images/blog/20220219184923.png">
+
+<link rel="canonical" href="https://feizhufanfan.github.io/2022/02/19/jetson-Nano%E4%B8%B2%E5%8F%A3%E9%85%8D%E7%BD%AE/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>jetson Nano串口配置 | 鲜奶鱼板面</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">鲜奶鱼板面</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-主页">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>主页</a>
+
+  </li>
+        <li class="menu-item menu-item-标签">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-技术">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>技术</a>
+
+  </li>
+        <li class="menu-item menu-item-life">
+
+    <a href="/categories/%E9%9A%8F%E7%AC%94/" rel="section"><i class="fa fa-pizza-slice fa-fw"></i>生活</a>
+
+  </li>
+        <li class="menu-item menu-item-归档">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://feizhufanfan.github.io/2022/02/19/jetson-Nano%E4%B8%B2%E5%8F%A3%E9%85%8D%E7%BD%AE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Mr.du">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鲜奶鱼板面">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          jetson Nano串口配置
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-02-19 17:39:48" itemprop="dateCreated datePublished" datetime="2022-02-19T17:39:48+08:00">2022-02-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-12-12 00:53:07" itemprop="dateModified" datetime="2025-12-12T00:53:07+08:00">2025-12-12</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux/jetson-Nano/" itemprop="url" rel="index"><span itemprop="name">jetson_Nano</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>jetson Nano镜像安装完成之后，准备实现自己的番茄计划。在项目实现过程当中遇到一些需要关注的点，于是便将他们单独罗列出来记录一下。</p>
+<h2 id="UART的配置"><a href="#UART的配置" class="headerlink" title="UART的配置"></a>UART的配置</h2><p>由于Jetson Nano的串口引脚布局和树莓派的布局几乎一致（我想应该时树莓派在极客圈很火相关的资源也比较多。为了很好的融合这个圈子保持引脚标号上将树莓派作为参照，既能够使用树莓派相关的资源也方便极客们更快的上手Nano),查询很多资源后得知串口的通信基本上都是用Pyhton来进行操作的。作为一名C++为主打的码农怎么能只会Python调库,必须C++来实现串口的读写。</p>
+<p>首先要理解串口在linux系统中的存在形式。按照linux的哲学一切都是文件。也就是说串口这个设备多Linux来说就是一个文件。当我们需要使用串口进行通信时，只需要按照串口通信的配置配置该文件，然后对文件进行读写操作即可实现串口收发。理解了这一形式那开始验证。</p>
+<ol>
+<li><p>首先接线  </p>
+<p>有图中红框标出的部分，可以看出串口的引脚为8、9设备名称为<code>ttyTHS1</code><br><img src="https://blog.feizhufanfan.top:18088/minio/images/blog/20220219184923.png" alt="Uart-pin"></p>
+<p>这里我使用的时PL2303USB-TTL作为与Nano通信的工具。</p>
+<p>未插上USB-TTL时,设备列表如图<br><img src="https://blog.feizhufanfan.top:18088/minio/images/blog/20220219190211.png" alt="设备未插"></p>
+<p>插上设备后可以看到新增加了一个<code>ttyUSB0</code>的串口设备<br><img src="https://blog.feizhufanfan.top:18088/minio/images/blog/20220219190317.png" alt="插上设备">  </p>
+<p>然后将USB-TTL的RX，TX接到Nano的8、10引脚<br><img src="https://blog.feizhufanfan.top:18088/minio/images/blog/20220226210741.png" alt="jetson Nano">  </p>
+</li>
+<li><p>对串口设备（文件）赋予读写权限<br>主机上<br><code>sudo chmod a+wr /dev/ttyUSB0</code><br><img src="https://blog.feizhufanfan.top:18088/minio/images/blog/20220219192132.png" alt="主机"><br>Nano上<br><code>sudo chmod a+wr /dev/ttyTHS1</code><br><img src="https://blog.feizhufanfan.top:18088/minio/images/blog/20220219192332.png" alt="Nano"></p>
+</li>
+<li><p>对串口进行配置<br>主机上<br><code>sudo stty -F /dev/ttyUSB0 speed 115200 cs8 -parenb -cstopb</code><br>设置串口<code>ttyUSB0</code>波特率为115200，8位数据位，1位停止位，无校验位<br><img src="https://blog.feizhufanfan.top:18088/minio/images/blog/20220219225640.png" alt="设置波特率"><br>第一次设置的时候有一个默认波特率，在进行一次设置确保为设置的数值。<br>Nano上<br><img src="https://blog.feizhufanfan.top:18088/minio/images/blog/20220219230105.png" alt="设置波特率"></p>
+</li>
+<li><p>通信测试<br>主机发给Nano<br>主机往<code>/dev/ttyUSB0</code>写入要发送的数据，Nano读取<code>/dev/ttyTHS1</code>里的数据。<br><img src="https://blog.feizhufanfan.top:18088/minio/images/blog/20220219231021.png" alt="主机发给Nano"><br>可以看到Nano读取到了主机发的数据了.接下来我们发过来测一下。  </p>
+<p>Nano发给主机<br>Nano往<code>/dev/ttyTHS1</code>里写入数据。主机往<code>/dev/ttyUSB0</code>里读取数据，<br><img src="https://blog.feizhufanfan.top:18088/minio/images/blog/20220219232003.png" alt="Nano发给主机"></p>
+</li>
+</ol>
+<p>哈哈哈，主机也收到了数据。这就表示我们之前的想法是对了。那么实现C++的串口收发还会有什么问题吗。就是文件读写。这里我就不pro出代码了，后续会放到仓库里。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%95%AA%E8%8C%84%E8%AE%A1%E5%88%92/" rel="tag"># 番茄计划</a>
+              <a href="/tags/UART/" rel="tag"># UART</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/02/18/Linux%E7%B3%BB%E7%BB%9F%E5%88%9B%E5%BB%BA%E5%BC%80%E6%9C%BA%E5%90%AF%E5%8A%A8%E6%9C%8D%E5%8A%A1/" rel="prev" title="linux系统创建开机启动服务">
+      <i class="fa fa-chevron-left"></i> linux系统创建开机启动服务
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/02/19/jetson-NanoPWM%E9%85%8D%E7%BD%AE/" rel="next" title="jetson NanoPWM配置">
+      jetson NanoPWM配置 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#UART%E7%9A%84%E9%85%8D%E7%BD%AE"><span class="nav-number">1.1.</span> <span class="nav-text">UART的配置</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Mr.du</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+          <span class="site-state-item-count">75</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">68</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">63</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/feizhufanfan" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;feizhufanfan" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1009963012@qq.com" title="E-Mail → mailto:1009963012@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2015 – 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Mr.du</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
